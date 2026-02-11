@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pokédex — Busca las estadísticas base de cualquier Pokémon por nombre o número">
+    <title>Pokédex — Estadísticas Base</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/styles.css">
+</head>
+
+<body>
+    <div class="app">
+        <!-- Particles background -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="pokeball-icon">
+                    <div class="pokeball-top"></div>
+                    <div class="pokeball-center"></div>
+                    <div class="pokeball-bottom"></div>
+                </div>
+                <h1>Pokédex</h1>
+            </div>
+            <p class="subtitle">Estadísticas Base de Pokémon</p>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Nombre o número del Pokémon..." autocomplete="off" />
+                    <button id="searchBtn" class="search-btn">
+                        <span>Buscar</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="search-actions">
+                    <p class="search-hint">Ejemplo:
+                        <span class="hint-tag" data-search="pikachu">pikachu</span>
+                        <span class="hint-tag" data-search="25">25</span>
+                        <span class="hint-tag" data-search="charizard">charizard</span>
+                        <span class="hint-tag" data-search="150">150</span>
+                    </p>
+                    <button id="randomBtn" class="random-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+                        </svg>
+                        Aleatorio
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Spinner -->
+        <div class="loader-container" id="loader" style="display: none;">
+            <div class="pokeball-loader">
+                <div class="pokeball-loader-top"></div>
+                <div class="pokeball-loader-center"></div>
+                <div class="pokeball-loader-bottom"></div>
+            </div>
+            <p class="loader-text">Buscando Pokémon...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-container" id="errorContainer" style="display: none;">
+            <div class="error-card">
+                <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M16 16s-1.5-2-4-2-4 2-4 2" />
+                    <line x1="9" y1="9" x2="9.01" y2="9" />
+                    <line x1="15" y1="9" x2="15.01" y2="9" />
+                </svg>
+                <p id="errorMessage">Pokémon no encontrado</p>
+            </div>
+        </div>
+
+        <!-- Pokemon Card -->
+        <section class="pokemon-display" id="pokemonCard" style="display: none;">
+            <div class="pokemon-card">
+                <!-- Card Header with Image -->
+                <div class="card-header" id="cardHeader">
+                    <!-- Shiny Toggle -->
+                    <button class="shiny-toggle" id="shinyToggle" title="Ver versión shiny">
+                        <span class="sparkle">✨</span> Shiny
+                    </button>
+
+                    <div class="card-number" id="pokemonNumber">#025</div>
+                    <div class="pokemon-image-container">
+                        <div class="pokemon-glow" id="pokemonGlow"></div>
+                        <img id="pokemonImage" class="pokemon-image" src="" alt="Pokemon" />
+                    </div>
+                    <h2 class="pokemon-name" id="pokemonName">Pikachu</h2>
+                    <div class="pokemon-types" id="pokemonTypes"></div>
+                    <p class="pokemon-description" id="pokemonDescription"></p>
+                </div>
+
+                <!-- Stats Section -->
+                <div class="card-body">
+                    <h3 class="stats-title">Estadísticas Base</h3>
+                    <div class="stats-grid" id="statsGrid"></div>
+                    <div class="stats-total">
+                        <span class="total-label">Total</span>
+                        <span class="total-value" id="statsTotal">0</span>
+                    </div>
+                </div>
+
+                <!-- Info Section -->
+                <div class="card-footer">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Altura</span>
+                            <span class="info-value" id="pokemonHeight">0.0 m</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Peso</span>
+                            <span class="info-value" id="pokemonWeight">0.0 kg</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Experiencia Base</span>
+                            <span class="info-value" id="pokemonExp">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Habilidades</span>
+                            <span class="info-value" id="pokemonAbilities">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="prevBtn" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                        Anterior
+                    </button>
+                    <button class="nav-btn" id="nextBtn" disabled>
+                        Siguiente
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Datos proporcionados por <a href="https://pokeapi.co/" target="_blank" rel="noopener">PokéAPI</a> · Usa ←
+                → para navegar</p>
+        </footer>
+    </div>
+
+    <script src="src/js/app.js"></script>
+</body>
+
+</html>
