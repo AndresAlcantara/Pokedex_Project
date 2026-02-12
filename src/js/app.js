@@ -54,13 +54,16 @@ const TRANSLATIONS = {
         'combat-log-empty': "Selecciona dos Pokémon para comenzar la simulación.",
         'footer-data': "Datos proporcionados por",
         'footer-project': "Proyecto Pokedex",
-        // Stats mapping
-        'hp': 'PS',
-        'attack': 'Ataque',
-        'defense': 'Defensa',
-        'special-attack': 'At. Esp.',
-        'special-defense': 'Def. Esp.',
-        'speed': 'Velocidad'
+        'hp': 'PS', 'attack': 'Ataque', 'defense': 'Defensa',
+        'special-attack': 'At. Esp.', 'special-defense': 'Def. Esp.', 'speed': 'Velocidad',
+        'battle-start': "¡Comienza el combate entre {p1} y {p2}!",
+        'battle-win': "¡{winner} ha ganado el combate!",
+        'battle-crit': " ¡GOLPE CRÍTICO!",
+        'battle-special': "ataque especial",
+        'battle-physical': "ataque físico",
+        'battle-attack-msg': "{attacker} usa {type} y hace {damage} de daño.{crit}",
+        'no-description': "Sin descripción disponible.",
+        'lang-toggle-title': "Cambiar idioma"
     },
     en: {
         'meta-description': "Pokédex — Search base stats for any Pokémon by name or number",
@@ -101,16 +104,218 @@ const TRANSLATIONS = {
         'combat-log-empty': "Select two Pokémon to start the simulation.",
         'footer-data': "Data provided by",
         'footer-project': "Pokedex Project",
-        // Stats mapping
-        'hp': 'HP',
-        'attack': 'Attack',
-        'defense': 'Defense',
-        'special-attack': 'Sp. Atk',
-        'special-defense': 'Sp. Def',
-        'speed': 'Speed'
+        'hp': 'HP', 'attack': 'Attack', 'defense': 'Defense',
+        'special-attack': 'Sp. Atk', 'special-defense': 'Sp. Def', 'speed': 'Speed',
+        'battle-start': "The battle between {p1} and {p2} begins!",
+        'battle-win': "{winner} has won the battle!",
+        'battle-crit': " CRITICAL HIT!",
+        'battle-special': "special attack",
+        'battle-physical': "physical attack",
+        'battle-attack-msg': "{attacker} uses {type} and deals {damage} damage.{crit}",
+        'no-description': "No description available.",
+        'lang-toggle-title': "Change language"
+    },
+    ja: {
+        'meta-description': "ポケデックス — 名前か番号でポケモンの基本ステータスを検索",
+        'title': "ポケデックス — 基本ステータス",
+        'logo-title': "ホームに戻る",
+        'subtitle': "基本ステータス",
+        'nav-search': "検索",
+        'nav-battle': "バトル",
+        'nav-pokedex': "ポケデックス",
+        'nav-combat': "対戦シミュレーター",
+        'search-placeholder': "ポケモンの名前または番号...",
+        'search-btn': "検索",
+        'search-example': "例",
+        'random-btn': "おまかせ",
+        'loader-text': "ポケモンを検索中...",
+        'error-not-found': "ポケモンが見つかりません",
+        'shiny-toggle': "色違いを表示",
+        'shiny-label': "色違い",
+        'mega-toggle': "メガシンカ",
+        'mega-label': "メガシンカ",
+        'cry-toggle': "なきごえ",
+        'stats-title': "基本ステータス",
+        'stats-total': "合計",
+        'info-height': "たかさ",
+        'info-weight': "おもさ",
+        'info-exp': "基礎経験値",
+        'info-abilities': "特性",
+        'evo-title': "進化の流れ",
+        'nav-prev': "前へ",
+        'nav-next': "次へ",
+        'combat-p1-title': "あなたのポケモン",
+        'combat-p2-title': "相手",
+        'combat-search-placeholder': "検索...",
+        'combat-p1-empty': "ポケモンを選択",
+        'combat-p2-empty': "相手を選択",
+        'combat-start-btn': "対戦開始！",
+        'combat-log-title': "対戦ログ",
+        'combat-log-empty': "2匹 de ポケモンを選択してシミュレーションを開始してください。",
+        'footer-data': "データ提供：",
+        'footer-project': "ポケデックス・プロジェクト",
+        'hp': 'HP', 'attack': 'こうげき', 'defense': 'ぼうぎょ',
+        'special-attack': 'とくこう', 'special-defense': 'とくぼう', 'speed': 'すばやさ',
+        'battle-start': "{p1} と {p2} のバトルが始まった！",
+        'battle-win': "{winner} の勝ち！",
+        'battle-crit': " きゅうしょに あたった！",
+        'battle-special': "とくしゅこうげき",
+        'battle-physical': "ぶつりこうげき",
+        'battle-attack-msg': "{attacker} は {type} をくりだし、 {damage} ダメージ をあたえた！{crit}",
+        'no-description': "説明はありません。",
+        'lang-toggle-title': "言語を切り替える"
+    },
+    de: {
+        'meta-description': "Pokédex — Suche Basiswerte for jedes Pokémon nach Name oder Nummer",
+        'title': "Pokédex — Basiswerte",
+        'logo-title': "Startseite",
+        'subtitle': "Basiswerte",
+        'nav-search': "Suche",
+        'nav-battle': "Kampf",
+        'nav-pokedex': "Pokédex",
+        'nav-combat': "Kampfsimulator",
+        'search-placeholder': "Pokémon Name oder Nummer...",
+        'search-btn': "Suche",
+        'search-example': "Beispiel",
+        'random-btn': "Zufall",
+        'loader-text': "Suche Pokémon...",
+        'error-not-found': "Pokémon nicht gefunden",
+        'shiny-toggle': "Shiny-Version anzeigen",
+        'shiny-label': "Shiny",
+        'mega-toggle': "Mega-Entwicklung",
+        'mega-label': "Mega",
+        'cry-toggle': "Ruf abspielen",
+        'stats-title': "Basiswerte",
+        'stats-total': "Gesamt",
+        'info-height': "Größe",
+        'info-weight': "Gewicht",
+        'info-exp': "Basis-EP",
+        'info-abilities': "Fähigkeiten",
+        'evo-title': "Entwicklungskette",
+        'nav-prev': "Zurück",
+        'nav-next': "Weiter",
+        'combat-p1-title': "Dein Pokémon",
+        'combat-p2-title': "Gegner",
+        'combat-search-placeholder': "Suche...",
+        'combat-p1-empty': "Wähle ein Pokémon",
+        'combat-p2-empty': "Wähle einen Gegner",
+        'combat-start-btn': "KAMPF STARTEN!",
+        'combat-log-title': "Kampfprotokoll",
+        'combat-log-empty': "Wähle zwei Pokémon, um die Simulation zu starten.",
+        'footer-data': "Daten von",
+        'footer-project': "Pokédex-Projekt",
+        'hp': 'KP', 'attack': 'Angriff', 'defense': 'Verteidigung',
+        'special-attack': 'Sp.-Ang.', 'special-defense': 'Sp.-Vert.', 'speed': 'Initiative',
+        'battle-start': "Der Kampf zwischen {p1} und {p2} beginnt!",
+        'battle-win': "{winner} hat den Kampf gewonnen!",
+        'battle-crit': " VOLLTREFFER!",
+        'battle-special': "Spezial-Angriff",
+        'battle-physical': "Physischer Angriff",
+        'battle-attack-msg': "{attacker} nutzt {type} und fügt {damage} Schaden zu.{crit}",
+        'no-description': "Keine Beschreibung verfügbar.",
+        'lang-toggle-title': "Sprache ändern"
+    },
+    fr: {
+        'meta-description': "Pokédex — Recherchez les statistiques de base de n'importe quel Pokémon par nom ou numéro",
+        'title': "Pokédex — Stats de Base",
+        'logo-title': "Retour à l'accueil",
+        'subtitle': "Stats de Base",
+        'nav-search': "Chercher",
+        'nav-battle': "Combat",
+        'nav-pokedex': "Pokédex",
+        'nav-combat': "Simulateur de Combat",
+        'search-placeholder': "Nom ou numéro du Pokémon...",
+        'search-btn': "Chercher",
+        'search-example': "Exemple",
+        'random-btn': "Aléatoire",
+        'loader-text': "Recherche du Pokémon...",
+        'error-not-found': "Pokémon non trouvé",
+        'shiny-toggle': "Voir la version shiny",
+        'shiny-label': "Shiny",
+        'mega-toggle': "Méga-Évolution",
+        'mega-label': "Méga",
+        'cry-toggle': "Jouer le cri",
+        'stats-title': "Stats de Base",
+        'stats-total': "Total",
+        'info-height': "Taille",
+        'info-weight': "Poids",
+        'info-exp': "Expér. de Base",
+        'info-abilities': "Talents",
+        'evo-title': "Chaîne d'Évolution",
+        'nav-prev': "Précédent",
+        'nav-next': "Suivant",
+        'combat-p1-title': "Ton Pokémon",
+        'combat-p2-title': "Adversaire",
+        'combat-search-placeholder': "Chercher...",
+        'combat-p1-empty': "Sélectionne un Pokémon",
+        'combat-p2-empty': "Sélectionne un Adversaire",
+        'combat-start-btn': "COMMENCER LE COMBAT !",
+        'combat-log-title': "Journal de Combat",
+        'combat-log-empty': "Sélectionne deux Pokémon pour commencer la simulation.",
+        'footer-data': "Données par",
+        'footer-project': "Projet Pokédex",
+        'hp': 'PV', 'attack': 'Attaque', 'defense': 'Défense',
+        'special-attack': 'Att. Spé.', 'special-defense': 'Déf. Spé.', 'speed': 'Vitesse',
+        'battle-start': "Le combat entre {p1} et {p2} commence !",
+        'battle-win': "{winner} a gagné le combat !",
+        'battle-crit': " UN COUP CRITIQUE !",
+        'battle-special': "attaque spéciale",
+        'battle-physical': "attaque physique",
+        'battle-attack-msg': "{attacker} utilise {type} et inflige {damage} dégâts.{crit}",
+        'no-description': "Aucune description disponible.",
+        'lang-toggle-title': "Changer de langue"
+    },
+    it: {
+        'meta-description': "Pokédex — Cerca le statistiche di base di qualsiasi Pokémon per nome o numero",
+        'title': "Pokédex — Statistiche di Base",
+        'logo-title': "Torna alla home",
+        'subtitle': "Statistiche di Base",
+        'nav-search': "Cerca",
+        'nav-battle': "Lotta",
+        'nav-pokedex': "Pokédex",
+        'nav-combat': "Simulatore di Lotta",
+        'search-placeholder': "Nome o numero del Pokémon...",
+        'search-btn': "Cerca",
+        'search-example': "Esempio",
+        'random-btn': "Casuale",
+        'loader-text': "Ricerca Pokémon...",
+        'error-not-found': "Pokémon non trovato",
+        'shiny-toggle': "Visualizza versione shiny",
+        'shiny-label': "Shiny",
+        'mega-toggle': "Megaevoluzione",
+        'mega-label': "Mega",
+        'cry-toggle': "Riproduci verso",
+        'stats-title': "Statistiche di Base",
+        'stats-total': "Totale",
+        'info-height': "Altezza",
+        'info-weight': "Peso",
+        'info-exp': "Esp. di Base",
+        'info-abilities': "Abilità",
+        'evo-title': "Catena Evolutiva",
+        'nav-prev': "Precedente",
+        'nav-next': "Successivo",
+        'combat-p1-title': "Il tuo Pokémon",
+        'combat-p2-title': "Avversario",
+        'combat-search-placeholder': "Cerca...",
+        'combat-p1-empty': "Seleziona un Pokémon",
+        'combat-p2-empty': "Seleziona un Avversario",
+        'combat-start-btn': "INIZIA LA LOTTA!",
+        'combat-log-title': "Registro di Lotta",
+        'combat-log-empty': "Seleziona due Pokémon per iniziare la simulazione.",
+        'footer-data': "Dati forniti da",
+        'footer-project': "Progetto Pokédex",
+        'hp': 'PS', 'attack': 'Attacco', 'defense': 'Difesa',
+        'special-attack': 'Att. Sp.', 'special-defense': 'Dif. Sp.', 'speed': 'Velocità',
+        'battle-start': "La lotta tra {p1} e {p2} ha inizio!",
+        'battle-win': "{winner} ha vinto la lotta!",
+        'battle-crit': " UN BRUTTO COLPO!",
+        'battle-special': "attacco speciale",
+        'battle-physical': "attacco fisico",
+        'battle-attack-msg': "{attacker} usa {type} e infligge {damage} danni.{crit}",
+        'no-description': "Nessuna descrizione disponibile.",
+        'lang-toggle-title': "Cambia lingua"
     }
 };
-
 // ========== DOM Elements ==========
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
@@ -251,7 +456,10 @@ function bindEvents() {
 
 // ========== Language Switcher ==========
 function toggleLanguage() {
-    currentLang = currentLang === 'es' ? 'en' : 'es';
+    const languages = ['es', 'en', 'ja', 'de', 'fr', 'it'];
+    const currentIndex = languages.indexOf(currentLang);
+    currentLang = languages[(currentIndex + 1) % languages.length];
+
     if (currentLangDisplay) currentLangDisplay.textContent = currentLang.toUpperCase();
 
     updateUILanguage();
@@ -564,7 +772,7 @@ function renderPokemon(data, description, isLegendary = false) {
 
     // Description
     if (pokemonDesc) {
-        pokemonDesc.textContent = description || (currentLang === 'es' ? 'Sin descripción disponible.' : 'No description available.');
+        pokemonDesc.textContent = description || TRANSLATIONS[currentLang]['no-description'];
     }
 
     // Stats
@@ -866,7 +1074,7 @@ async function handleCombatSearch(slot, query) {
         updateCombatCard(slot, data);
         checkBattleReady();
     } catch (e) {
-        alert(currentLang === 'es' ? 'Pokémon no encontrado' : 'Pokémon not found');
+        alert(TRANSLATIONS[currentLang]['error-not-found']);
     }
 }
 
@@ -929,7 +1137,10 @@ async function startBattle() {
     updateHpBar(1, 100);
     updateHpBar(2, 100);
 
-    addLog('system', `¡Comienza el combate entre ${p1.name} y ${p2.name}!`);
+    const startMsg = TRANSLATIONS[currentLang]['battle-start']
+        .replace('{p1}', p1.name)
+        .replace('{p2}', p2.name);
+    addLog('system', startMsg);
     await wait(1000);
 
     let turn = 1;
@@ -960,9 +1171,7 @@ async function startBattle() {
         await wait(500);
     }
 
-    const winMsg = currentLang === 'es'
-        ? `¡${winner.name} ha ganado el combate!`
-        : `${winner.name} has won the battle!`;
+    const winMsg = TRANSLATIONS[currentLang]['battle-win'].replace('{winner}', winner.name);
     addLog('win', winMsg);
     startBattleBtn.disabled = false;
 }
@@ -995,14 +1204,16 @@ async function performAttack(attacker, defender, slot) {
     updateHpBar(defenderSlot, hpPercent);
 
     // Log
-    const critText = crit > 1 ? (currentLang === 'es' ? ' ¡GOLPE CRÍTICO!' : ' CRITICAL HIT!') : '';
+    const critText = crit > 1 ? TRANSLATIONS[currentLang]['battle-crit'] : '';
     const moveType = isSpecial
-        ? (currentLang === 'es' ? 'ataque especial' : 'special attack')
-        : (currentLang === 'es' ? 'ataque físico' : 'physical attack');
+        ? TRANSLATIONS[currentLang]['battle-special']
+        : TRANSLATIONS[currentLang]['battle-physical'];
 
-    const attackMsg = currentLang === 'es'
-        ? `${attacker.name} usa ${moveType} y hace ${damage} de daño.${critText}`
-        : `${attacker.name} uses ${moveType} and deals ${damage} damage.${critText}`;
+    const attackMsg = TRANSLATIONS[currentLang]['battle-attack-msg']
+        .replace('{attacker}', attacker.name)
+        .replace('{type}', moveType)
+        .replace('{damage}', damage)
+        .replace('{crit}', critText);
 
     addLog(slot === 1 ? 'p1' : 'p2', attackMsg);
 
@@ -1053,6 +1264,34 @@ function translateType(type) {
             ground: 'Ground', flying: 'Flying', psychic: 'Psychic', bug: 'Bug',
             rock: 'Rock', ghost: 'Ghost', dragon: 'Dragon', dark: 'Dark',
             steel: 'Steel', fairy: 'Fairy',
+        },
+        ja: {
+            normal: 'ノーマル', fire: 'ほのお', water: 'みず', electric: 'でんき',
+            grass: 'くさ', ice: 'こおり', fighting: 'かくとう', poison: 'どく',
+            ground: 'じめん', flying: 'ひこう', psychic: 'エスパー', bug: 'むし',
+            rock: 'いわ', ghost: 'ゴースト', dragon: 'ドラゴン', dark: 'あく',
+            steel: 'はがね', fairy: 'フェアリー',
+        },
+        de: {
+            normal: 'Normal', fire: 'Feuer', water: 'Wasser', electric: 'Elektro',
+            grass: 'Pflanze', ice: 'Eis', fighting: 'Kampf', poison: 'Gift',
+            ground: 'Boden', flying: 'Flug', psychic: 'Psycho', bug: 'Käfer',
+            rock: 'Gestein', ghost: 'Geist', dragon: 'Drache', dark: 'Unlicht',
+            steel: 'Stahl', fairy: 'Fee',
+        },
+        fr: {
+            normal: 'Normal', fire: 'Feu', water: 'Eau', electric: 'Électrik',
+            grass: 'Plante', ice: 'Glace', fighting: 'Combat', poison: 'Poison',
+            ground: 'Sol', flying: 'Vol', psychic: 'Psy', bug: 'Insecte',
+            rock: 'Roche', ghost: 'Spectre', dragon: 'Dragon', dark: 'Ténèbres',
+            steel: 'Acier', fairy: 'Fée',
+        },
+        it: {
+            normal: 'Normale', fire: 'Fuoco', water: 'Acqua', electric: 'Elettro',
+            grass: 'Erba', ice: 'Ghiaccio', fighting: 'Lotta', poison: 'Veleno',
+            ground: 'Terra', flying: 'Volante', psychic: 'Psico', bug: 'Coleottero',
+            rock: 'Roccia', ghost: 'Spettro', dragon: 'Drago', dark: 'Buio',
+            steel: 'Acciaio', fairy: 'Folletto',
         }
     };
     return translations[currentLang]?.[type] || translations['en']?.[type] || type;

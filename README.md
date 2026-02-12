@@ -14,11 +14,12 @@ Una aplicación web que se conecta a la [PokéAPI](https://pokeapi.co/) para mos
 |---|---|
 | 🔍 **Búsqueda** | Busca Pokémon por nombre (`pikachu`) o por número (`25`) |
 | 📊 **Estadísticas base** | PS, Ataque, Defensa, At. Esp., Def. Esp. y Velocidad con barras animadas |
-| 🎨 **Tipos coloreados** | Cada tipo tiene su color distintivo, traducido al español |
+| 🎨 **Tipos coloreados** | Cada tipo tiene su color distintivo, traducido al idioma seleccionado |
 | ✨ **Modo Shiny** | Alterna entre sprite normal y shiny con un botón |
 | ⬅️➡️ **Navegación** | Botones Anterior/Siguiente para recorrer la Pokédex |
 | 🎲 **Pokémon aleatorio** | Descubre Pokémon al azar con un solo clic |
-| 📖 **Descripción** | Texto descriptivo del Pokémon obtenido de la API (en español si disponible) |
+| 📖 **Descripción** | Texto descriptivo del Pokémon obtenido de la API en el idioma actual |
+| 🌐 **Multilingüe** | Soporte para **6 idiomas**: Español (ES), Inglés (EN), Japonés (JA), Alemán (DE), Francés (FR) e Italiano (IT) |
 | ⌨️ **Atajos de teclado** | Usa `←` y `→` para navegar entre Pokémon |
 | 📱 **Responsive** | Diseño adaptado a móvil, tablet y escritorio |
 
