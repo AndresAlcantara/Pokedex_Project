@@ -42,6 +42,11 @@ const TRANSLATIONS = {
         'info-exp': "Experiencia Base",
         'info-abilities': "Habilidades",
         'evo-title': "Cadena Evolutiva",
+        'info-gender': "Género",
+        'info-catch': "Ratio Captura",
+        'info-happiness': "Felicidad Base",
+        'info-habitat': "Hábitat",
+        'info-growth': "Crecimiento",
         'nav-prev': "Anterior",
         'nav-next': "Siguiente",
         'combat-p1-title': "Tu Pokémon",
@@ -92,6 +97,11 @@ const TRANSLATIONS = {
         'info-exp': "Base Exp",
         'info-abilities': "Abilities",
         'evo-title': "Evolution Chain",
+        'info-gender': "Gender",
+        'info-catch': "Catch Rate",
+        'info-happiness': "Base Happiness",
+        'info-habitat': "Habitat",
+        'info-growth': "Growth Rate",
         'nav-prev': "Previous",
         'nav-next': "Next",
         'combat-p1-title': "Your Pokémon",
@@ -142,6 +152,11 @@ const TRANSLATIONS = {
         'info-exp': "基礎経験値",
         'info-abilities': "特性",
         'evo-title': "進化の流れ",
+        'info-gender': "性別",
+        'info-catch': "捕捉率",
+        'info-happiness': "なつき度",
+        'info-habitat': "生息地",
+        'info-growth': "成長速度",
         'nav-prev': "前へ",
         'nav-next': "次へ",
         'combat-p1-title': "あなたのポケモン",
@@ -192,6 +207,11 @@ const TRANSLATIONS = {
         'info-exp': "Basis-EP",
         'info-abilities': "Fähigkeiten",
         'evo-title': "Entwicklungskette",
+        'info-gender': "Geschlecht",
+        'info-catch': "Fangrate",
+        'info-happiness': "Basis-Zutraulichkeit",
+        'info-habitat': "Habitat",
+        'info-growth': "Wachstumsrate",
         'nav-prev': "Zurück",
         'nav-next': "Weiter",
         'combat-p1-title': "Dein Pokémon",
@@ -242,6 +262,11 @@ const TRANSLATIONS = {
         'info-exp': "Expér. de Base",
         'info-abilities': "Talents",
         'evo-title': "Chaîne d'Évolution",
+        'info-gender': "Sexe",
+        'info-catch': "Taux de Capture",
+        'info-happiness': "Bonheur de Base",
+        'info-habitat': "Habitat",
+        'info-growth': "Taux de Croissance",
         'nav-prev': "Précédent",
         'nav-next': "Suivant",
         'combat-p1-title': "Ton Pokémon",
@@ -292,6 +317,11 @@ const TRANSLATIONS = {
         'info-exp': "Esp. di Base",
         'info-abilities': "Abilità",
         'evo-title': "Catena Evolutiva",
+        'info-gender': "Genere",
+        'info-catch': "Tasso di Cattura",
+        'info-happiness': "Felicità di Base",
+        'info-habitat': "Habitat",
+        'info-growth': "Tasso di Crescita",
         'nav-prev': "Precedente",
         'nav-next': "Successivo",
         'combat-p1-title': "Il tuo Pokémon",
@@ -564,6 +594,13 @@ async function fetchPokemon(query) {
         let description = '';
         let isLegendary = false;
         let evolutionUrl = null;
+        let extraInfo = {
+            genderRate: -1,
+            captureRate: 0,
+            happiness: 0,
+            habitat: '—',
+            growthRate: '—'
+        };
 
         try {
             const speciesRes = await fetch(SPECIES_API + pokemonData.id);
@@ -571,6 +608,13 @@ async function fetchPokemon(query) {
                 const speciesData = await speciesRes.json();
                 isLegendary = speciesData.is_legendary || speciesData.is_mythical;
                 evolutionUrl = speciesData.evolution_chain?.url;
+
+                // Extra Info
+                extraInfo.genderRate = speciesData.gender_rate;
+                extraInfo.captureRate = speciesData.capture_rate;
+                extraInfo.happiness = speciesData.base_happiness;
+                extraInfo.habitat = speciesData.habitat?.name || '—';
+                extraInfo.growthRate = speciesData.growth_rate?.name || '—';
 
                 // Detection of Mega Evolutions
                 if (speciesData.varieties) {
@@ -600,7 +644,7 @@ async function fetchPokemon(query) {
             evolutionSection.style.display = 'none';
         }
 
-        renderPokemon(pokemonData, description, isLegendary);
+        renderPokemon(pokemonData, description, isLegendary, extraInfo);
     } catch (err) {
         if (err.message === 'not_found') {
             const errorMsg = currentLang === 'es'
@@ -696,7 +740,7 @@ function playCry() {
 }
 
 // ========== Render Pokemon ==========
-function renderPokemon(data, description, isLegendary = false) {
+function renderPokemon(data, description, isLegendary = false, extraInfo = null) {
     const cardHeader = document.getElementById('cardHeader');
     const pokemonGlow = document.getElementById('pokemonGlow');
     const pokemonImage = document.getElementById('pokemonImage');
@@ -709,6 +753,13 @@ function renderPokemon(data, description, isLegendary = false) {
     const pokemonWeight = document.getElementById('pokemonWeight');
     const pokemonExp = document.getElementById('pokemonExp');
     const pokemonAbilities = document.getElementById('pokemonAbilities');
+
+    // New Fields
+    const pokemonGender = document.getElementById('pokemonGender');
+    const pokemonCapture = document.getElementById('pokemonCapture');
+    const pokemonHappiness = document.getElementById('pokemonHappiness');
+    const pokemonHabitat = document.getElementById('pokemonHabitat');
+    const pokemonGrowth = document.getElementById('pokemonGrowth');
 
     // Reset shiny state if toggle exists
     if (shinyToggle) shinyToggle.classList.remove('active');
@@ -819,6 +870,23 @@ function renderPokemon(data, description, isLegendary = false) {
         pokemonAbilities.textContent = data.abilities
             .map(a => a.ability.name.replace(/-/g, ' '))
             .join(', ');
+    }
+
+    // Extra Info Rendering
+    if (extraInfo) {
+        if (pokemonGender) {
+            if (extraInfo.genderRate === -1) {
+                pokemonGender.textContent = 'Genderless';
+            } else {
+                const female = (extraInfo.genderRate / 8) * 100;
+                const male = 100 - female;
+                pokemonGender.innerHTML = `<span style="color: #4a90e2">♂ ${male}%</span> <span style="color: #e24a8d">♀ ${female}%</span>`;
+            }
+        }
+        if (pokemonCapture) pokemonCapture.textContent = extraInfo.captureRate;
+        if (pokemonHappiness) pokemonHappiness.textContent = extraInfo.happiness;
+        if (pokemonHabitat) pokemonHabitat.textContent = extraInfo.habitat.charAt(0).toUpperCase() + extraInfo.habitat.slice(1);
+        if (pokemonGrowth) pokemonGrowth.textContent = extraInfo.growthRate.replace(/-/g, ' ').charAt(0).toUpperCase() + extraInfo.growthRate.replace(/-/g, ' ').slice(1);
     }
 
     // Navigation buttons state
@@ -1177,6 +1245,8 @@ async function startBattle() {
 }
 
 async function performAttack(attacker, defender, slot) {
+    const defenderSlot = slot === 1 ? 2 : 1;
+
     // Simple damage formula: (Attack * Power / Defense) / 5
     // Determine Physical or Special
     const atkStat = attacker.stats.find(s => s.stat.name === 'attack').base_stat;
@@ -1186,6 +1256,10 @@ async function performAttack(attacker, defender, slot) {
     const attackVal = isSpecial ? spAtkStat : atkStat;
     const defStatName = isSpecial ? 'special-defense' : 'defense';
     const defVal = defender.stats.find(s => s.stat.name === defStatName).base_stat;
+
+    // Trigger visual effect based on primary type
+    const primaryType = attacker.types[0].type.name;
+    triggerVisualEffect(slot, defenderSlot, primaryType);
 
     // Random power 40-100
     const power = Math.floor(Math.random() * 60) + 40;
@@ -1198,8 +1272,14 @@ async function performAttack(attacker, defender, slot) {
     defender.currentHp -= damage;
     if (defender.currentHp < 0) defender.currentHp = 0;
 
+    // Shake and flash defender
+    const defenderCard = document.querySelector(`#combatant${defenderSlot} .combat-card`);
+    if (defenderCard) {
+        defenderCard.classList.add('shake', 'flash');
+        setTimeout(() => defenderCard.classList.remove('shake', 'flash'), 500);
+    }
+
     // Update UI
-    const defenderSlot = slot === 1 ? 2 : 1;
     const hpPercent = (defender.currentHp / defender.maxHp) * 100;
     updateHpBar(defenderSlot, hpPercent);
 
@@ -1218,6 +1298,136 @@ async function performAttack(attacker, defender, slot) {
     addLog(slot === 1 ? 'p1' : 'p2', attackMsg);
 
     await wait(800);
+}
+
+function triggerVisualEffect(attackerSlot, targetSlot, type) {
+    const combatView = document.getElementById('combat-view');
+    const attackerImg = document.getElementById(`combatImg${attackerSlot}`);
+    const targetImg = document.getElementById(`combatImg${targetSlot}`);
+    if (!attackerImg || !targetImg) return;
+
+    const rectA = attackerImg.getBoundingClientRect();
+    const rectT = targetImg.getBoundingClientRect();
+
+    const centerA = { x: rectA.left + rectA.width / 2, y: rectA.top + rectA.height / 2 };
+    const centerT = { x: rectT.left + rectT.width / 2, y: rectT.top + rectT.height / 2 };
+
+    const dx = centerT.x - centerA.x;
+    const dy = centerT.y - centerA.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    const container = document.createElement('div');
+    container.className = 'epic-ray-container';
+    const mainColor = TYPE_COLORS[type]?.bg || '#fff';
+    container.style.color = mainColor;
+    container.style.left = `${centerA.x}px`;
+    container.style.top = `${centerA.y}px`;
+    container.style.width = `${distance}px`;
+    container.style.transform = `translate(0, -50%) rotate(${angle}deg)`;
+
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", "0 0 1000 100");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.className = "epic-ray-svg";
+
+    // Create multiple paths for the bloom/aura effect
+    const pathData = getEpicRayPath(type);
+    const pathLayers = ['glow', 'aura', 'core'];
+    pathLayers.forEach(layer => {
+        const p = document.createElementNS(svgNS, "path");
+        p.setAttribute("d", pathData);
+        p.className = `ray-path ray-path-${layer}`;
+        svg.appendChild(p);
+    });
+
+    const head = document.createElement('div');
+    head.className = "ray-head";
+
+    container.appendChild(svg);
+    container.appendChild(head);
+    document.body.appendChild(container);
+
+    // Continuous Trail Particles during travel
+    let trailInterval = setInterval(() => {
+        const headPos = head.getBoundingClientRect();
+        if (headPos.width > 0) {
+            spawnTrailParticle(headPos.left + headPos.width / 2, headPos.top + headPos.height / 2, mainColor);
+        }
+    }, 20);
+
+    setTimeout(() => {
+        clearInterval(trailInterval);
+        combatView.classList.add('combat-view-shake');
+        setTimeout(() => combatView.classList.remove('combat-view-shake'), 500);
+
+        const targetCard = document.querySelector(`#combatant${targetSlot} .combat-card`);
+        const ring = document.createElement('div');
+        ring.className = 'impact-ring-epic';
+        targetCard.appendChild(ring);
+
+        spawnParticles(targetCard, type);
+
+        setTimeout(() => {
+            ring.remove();
+            container.remove();
+        }, 600);
+    }, 450);
+}
+
+function spawnTrailParticle(x, y, color) {
+    const p = document.createElement('div');
+    p.className = 'trail-particle';
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.color = color;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 400);
+}
+
+function getEpicRayPath(type) {
+    switch (type) {
+        case 'electric': return "M 0 50 L 100 20 L 200 80 L 300 10 L 400 90 L 500 30 L 600 70 L 700 20 L 800 80 L 900 40 L 1000 50";
+        case 'fire': return "M 0 50 Q 125 0, 250 50 T 500 50 T 750 50 T 1000 50";
+        case 'water': return "M 0 50 C 250 150, 250 -50, 500 50 C 750 150, 750 -50, 1000 50";
+        case 'grass': return "M 0 50 L 100 40 A 50 50 0 0 1 200 50 L 300 60 A 50 50 0 0 0 400 50 L 1000 50";
+        default: return "M 0 50 L 900 50 L 950 40 L 1000 50 L 950 60 L 900 50";
+    }
+}
+
+function spawnParticles(container, type) {
+    const burst = document.createElement('div');
+    burst.className = 'particle-burst';
+    container.appendChild(burst);
+
+    const particleCount = 35; // Increased density
+    const color = TYPE_COLORS[type]?.bg || '#fff';
+
+    for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('div');
+        p.className = 'fx-particle';
+
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 100 + Math.random() * 250;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+
+        const size = 4 + Math.random() * 14;
+        const rotation = Math.random() * 360;
+        const radius = Math.random() > 0.5 ? '50%' : '2px'; // Varied shapes
+
+        p.style.setProperty('--tx', `${tx}px`);
+        p.style.setProperty('--ty', `${ty}px`);
+        p.style.setProperty('--sz', `${size}px`);
+        p.style.setProperty('--rot', `${rotation}deg`);
+        p.style.setProperty('--rd', radius);
+        p.style.color = color;
+
+        p.style.animationDelay = `${Math.random() * 0.1}s`;
+        burst.appendChild(p);
+    }
+    setTimeout(() => burst.remove(), 1200);
 }
 
 function updateHpBar(slot, percent) {

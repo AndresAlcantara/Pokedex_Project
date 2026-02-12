@@ -1761,3 +1761,275 @@ body.legendary::before {
 #currentLangDisplay {
     margin-left: 2px;
 }
+
+/* ========== High-Fidelity Combat Effects ========== */
+
+/* Overall Combat Container Shake - More intense */
+.combat-view-shake {
+    animation: grid-shake-epic 0.6s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes grid-shake-epic {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translate(-8px, -4px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translate(8px, 4px);
+    }
+}
+
+/* Base card shake & flash - Enhanced */
+.combat-card {
+    transition: transform 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    position: relative;
+}
+
+.shake {
+    animation: shake-heavy 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake-heavy {
+
+    10%,
+    90% {
+        transform: translate3d(-6px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(10px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-14px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(14px, 0, 0);
+    }
+}
+
+.flash {
+    animation: flash-bright 0.4s ease-out;
+}
+
+@keyframes flash-bright {
+
+    0%,
+    100% {
+        filter: brightness(1) contrast(1);
+    }
+
+    50% {
+        filter: brightness(4) contrast(1.5) saturate(2);
+    }
+}
+
+/* SVG Epic Ray Styles - Layered */
+.epic-ray-container {
+    position: fixed;
+    height: 120px;
+    z-index: 1000;
+    pointer-events: none;
+    overflow: visible;
+    transform-origin: center left;
+    display: flex;
+    align-items: center;
+    filter: drop-shadow(0 0 15px currentColor);
+}
+
+.epic-ray-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* Multiple paths for bloom effect */
+.ray-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ray-path-core {
+    stroke: white;
+    stroke-width: 4;
+    filter: blur(1px);
+    animation: ray-draw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ray-path-aura {
+    stroke: currentColor;
+    stroke-width: 15;
+    filter: blur(6px);
+    opacity: 0.6;
+    animation: ray-draw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ray-path-glow {
+    stroke: currentColor;
+    stroke-width: 30;
+    filter: blur(15px);
+    opacity: 0.3;
+    animation: ray-draw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ray-draw {
+    0% {
+        stroke-dashoffset: 1000;
+        opacity: 0;
+    }
+
+    30% {
+        opacity: 0.8;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+    }
+}
+
+/* Comet Head - With Motion Blur */
+.ray-head {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #fff 0%, currentColor 40%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(4px);
+    z-index: 1001;
+    opacity: 0;
+    box-shadow: 0 0 30px 10px currentColor;
+    animation: ray-head-motion 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes ray-head-motion {
+    0% {
+        left: 0%;
+        opacity: 0;
+        transform: scale(0.5) skewX(-20deg);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scale(1.2) skewX(-10deg);
+    }
+
+    100% {
+        left: 100%;
+        opacity: 0;
+        transform: scale(1.5) skewX(0deg);
+    }
+}
+
+/* Trail Particles */
+.trail-particle {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999;
+    filter: blur(1px);
+    box-shadow: 0 0 10px currentColor;
+    animation: trail-fade 0.4s ease-out forwards;
+}
+
+@keyframes trail-fade {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(0) translateY(10px);
+        opacity: 0;
+    }
+}
+
+/* Epic Impact Explosion */
+.particle-burst {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    pointer-events: none;
+    z-index: 1010;
+}
+
+.fx-particle {
+    position: absolute;
+    width: var(--sz, 8px);
+    height: var(--sz, 8px);
+    border-radius: var(--rd, 50%);
+    background: white;
+    box-shadow: 0 0 calc(var(--sz) * 2) currentColor;
+    opacity: 0;
+    animation: explode-realistic 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes explode-realistic {
+    0% {
+        transform: translate(0, 0) scale(1.5);
+        opacity: 1;
+        filter: brightness(2);
+    }
+
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot));
+        opacity: 0;
+        filter: brightness(1);
+    }
+}
+
+/* Shockwave */
+.impact-ring-epic {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 4px solid white;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 1020;
+    background: radial-gradient(circle, transparent 40%, rgba(255, 255, 255, 0.2) 70%, transparent 100%);
+    animation: shockwave 0.6s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+}
+
+@keyframes shockwave {
+    0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+        border-width: 20px;
+        filter: blur(0px);
+    }
+
+    100% {
+        width: 500px;
+        height: 500px;
+        opacity: 0;
+        border-width: 1px;
+        filter: blur(10px);
+    }
+}
