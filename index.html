@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Pokédex — Busca las estadísticas base de cualquier Pokémon por nombre o número">
-    <title>Pokédex — Estadísticas Base</title>
+    <meta name="description" content="Pokédex — Busca las estadísticas base de cualquier Pokémon por nombre o número"
+        data-i18n="meta-description">
+    <title data-i18n="title">Pokédex — Estadísticas Base</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -20,7 +21,7 @@
 
         <!-- Header -->
         <header class="header">
-            <div class="logo" id="logoHome" title="Ir al inicio">
+            <div class="logo" id="logoHome" title="Ir al inicio" data-i18n-title="logo-title">
                 <div class="pokeball-icon">
                     <div class="pokeball-top"></div>
                     <div class="pokeball-center"></div>
@@ -28,19 +29,29 @@
                 </div>
                 <div>
                     <h1>Pokédex</h1>
-                    <p class="subtitle">Estadísticas Base</p>
+                    <p class="subtitle" data-i18n="subtitle">Estadísticas Base</p>
                 </div>
             </div>
 
             <nav class="main-nav">
-                <button id="viewPokedexBtn" class="nav-item active" title="Pokédex">
+                <button id="langToggle" class="nav-item lang-btn" title="Cambiar idioma">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
+                    <span id="currentLangDisplay">ES</span>
+                </button>
+                <button id="viewPokedexBtn" class="nav-item active" title="Pokédex" data-i18n-title="nav-pokedex">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <span>Buscar</span>
+                    <span data-i18n="nav-search">Buscar</span>
                 </button>
-                <button id="viewCombatBtn" class="nav-item" title="Simulador de Combate">
+                <button id="viewCombatBtn" class="nav-item" title="Simulador de Combate" data-i18n-title="nav-combat">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14.5 17.5L3 6V2h4l11.5 11.5-4 4zM2 2l4 4M22 22l-4-4"></path>
                         <path d="M8.5 17.5L20 6V2h-4L4.5 13.5z"></path>
@@ -53,7 +64,7 @@
                         <path d="M19.5 4.5L4.5 19.5" stroke-width="2.5" />
                         <path d="M4.5 4.5l15 15" stroke-width="2.5" />
                     </svg>
-                    <span>Combate</span>
+                    <span data-i18n="nav-battle">Combate</span>
                 </button>
             </nav>
         </header>
@@ -69,16 +80,17 @@
                             <path d="m21 21-4.35-4.35" />
                         </svg>
                         <input type="text" id="searchInput" class="search-input"
-                            placeholder="Nombre o número del Pokémon..." autocomplete="off" />
+                            placeholder="Nombre o número del Pokémon..." autocomplete="off"
+                            data-i18n-placeholder="search-placeholder" />
                         <button id="searchBtn" class="search-btn">
-                            <span>Buscar</span>
+                            <span data-i18n="search-btn">Buscar</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
                         </button>
                     </div>
                     <div class="search-actions">
-                        <p class="search-hint">Ejemplo:
+                        <p class="search-hint"><span data-i18n="search-example">Ejemplo</span>:
                             <span class="hint-tag" data-search="pikachu">pikachu</span>
                             <span class="hint-tag" data-search="25">25</span>
                             <span class="hint-tag" data-search="mewtwo">mewtwo</span>
@@ -87,7 +99,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
                             </svg>
-                            Aleatorio
+                            <span data-i18n="random-btn">Aleatorio</span>
                         </button>
                     </div>
                 </div>
@@ -100,7 +112,7 @@
                     <div class="pokeball-loader-center"></div>
                     <div class="pokeball-loader-bottom"></div>
                 </div>
-                <p class="loader-text">Buscando Pokémon...</p>
+                <p class="loader-text" data-i18n="loader-text">Buscando Pokémon...</p>
             </div>
 
             <!-- Error Message -->
@@ -112,7 +124,7 @@
                         <line x1="9" y1="9" x2="9.01" y2="9" />
                         <line x1="15" y1="9" x2="15.01" y2="9" />
                     </svg>
-                    <p id="errorMessage">Pokémon no encontrado</p>
+                    <p id="errorMessage" data-i18n="error-not-found">Pokémon no encontrado</p>
                 </div>
             </div>
 
@@ -123,13 +135,16 @@
                     <div class="card-header" id="cardHeader">
                         <!-- Shiny Toggle -->
                         <div class="header-actions">
-                            <button class="action-btn" id="shinyToggle" title="Ver versión shiny">
-                                <span class="sparkle">✨</span> Shiny
+                            <button class="action-btn" id="shinyToggle" title="Ver versión shiny"
+                                data-i18n-title="shiny-toggle">
+                                <span class="sparkle">✨</span> <span data-i18n="shiny-label">Shiny</span>
                             </button>
-                            <button class="action-btn hidden" id="megaToggle" title="Mega Evolución">
-                                <span class="mega-icon">🧬</span> Mega
+                            <button class="action-btn hidden" id="megaToggle" title="Mega Evolución"
+                                data-i18n-title="mega-toggle">
+                                <span class="mega-icon">🧬</span> <span data-i18n="mega-label">Mega</span>
                             </button>
-                            <button class="action-btn" id="cryBtn" title="Reproducir grito">
+                            <button class="action-btn" id="cryBtn" title="Reproducir grito"
+                                data-i18n-title="cry-toggle">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path
                                         d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
@@ -149,10 +164,10 @@
 
                     <!-- Stats Section -->
                     <div class="card-body">
-                        <h3 class="stats-title">Estadísticas Base</h3>
+                        <h3 class="stats-title" data-i18n="stats-title">Estadísticas Base</h3>
                         <div class="stats-grid" id="statsGrid"></div>
                         <div class="stats-total">
-                            <span class="total-label">Total</span>
+                            <span class="total-label" data-i18n="stats-total">Total</span>
                             <span class="total-value" id="statsTotal">0</span>
                         </div>
                     </div>
@@ -161,19 +176,19 @@
                     <div class="card-footer">
                         <div class="info-grid">
                             <div class="info-item">
-                                <span class="info-label">Altura</span>
+                                <span class="info-label" data-i18n="info-height">Altura</span>
                                 <span class="info-value" id="pokemonHeight">0.0 m</span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Peso</span>
+                                <span class="info-label" data-i18n="info-weight">Peso</span>
                                 <span class="info-value" id="pokemonWeight">0.0 kg</span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Experiencia Base</span>
+                                <span class="info-label" data-i18n="info-exp">Experiencia Base</span>
                                 <span class="info-value" id="pokemonExp">0</span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Habilidades</span>
+                                <span class="info-label" data-i18n="info-abilities">Habilidades</span>
                                 <span class="info-value" id="pokemonAbilities">—</span>
                             </div>
                         </div>
@@ -181,7 +196,7 @@
 
                     <!-- Evolution Chain -->
                     <div class="evolution-section" id="evolutionSection" style="display: none;">
-                        <h3 class="evolution-title">Cadena Evolutiva</h3>
+                        <h3 class="evolution-title" data-i18n="evo-title">Cadena Evolutiva</h3>
                         <div class="evolution-chain" id="evolutionChain"></div>
                     </div>
 
@@ -191,10 +206,10 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M19 12H5M12 19l-7-7 7-7" />
                             </svg>
-                            Anterior
+                            <span data-i18n="nav-prev">Anterior</span>
                         </button>
                         <button class="nav-btn" id="nextBtn" disabled>
-                            Siguiente
+                            <span data-i18n="nav-next">Siguiente</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
@@ -213,15 +228,16 @@
                 <!-- Player 1 Slot -->
                 <div class="combatant-slot" id="combatant1">
                     <div class="slot-header">
-                        <h3>Tu Pokémon</h3>
+                        <h3 data-i18n="combat-p1-title">Tu Pokémon</h3>
                         <div class="combat-search-box">
-                            <input type="text" id="combatSearch1" placeholder="Buscar..." autocomplete="off">
+                            <input type="text" id="combatSearch1" placeholder="Buscar..." autocomplete="off"
+                                data-i18n-placeholder="combat-search-placeholder">
                             <button id="combatRand1">🎲</button>
                         </div>
                     </div>
 
                     <div class="combat-card glass-panel empty">
-                        <div class="empty-state-msg">Selecciona un Pokémon</div>
+                        <div class="empty-state-msg" data-i18n="combat-p1-empty">Selecciona un Pokémon</div>
                         <div class="combat-content hidden">
                             <img src="" class="combat-img" id="combatImg1" alt="P1">
                             <div class="combat-info">
@@ -241,15 +257,16 @@
                 <!-- Player 2 Slot -->
                 <div class="combatant-slot" id="combatant2">
                     <div class="slot-header">
-                        <h3>Oponente</h3>
+                        <h3 data-i18n="combat-p2-title">Oponente</h3>
                         <div class="combat-search-box">
-                            <input type="text" id="combatSearch2" placeholder="Buscar..." autocomplete="off">
+                            <input type="text" id="combatSearch2" placeholder="Buscar..." autocomplete="off"
+                                data-i18n-placeholder="combat-search-placeholder">
                             <button id="combatRand2">🎲</button>
                         </div>
                     </div>
 
                     <div class="combat-card glass-panel empty">
-                        <div class="empty-state-msg">Selecciona un Oponente</div>
+                        <div class="empty-state-msg" data-i18n="combat-p2-empty">Selecciona un Oponente</div>
                         <div class="combat-content hidden">
                             <img src="" class="combat-img" id="combatImg2" alt="P2">
                             <div class="combat-info">
@@ -266,13 +283,14 @@
 
             <!-- Battle Controls & Log -->
             <div class="battle-section">
-                <button id="startBattleBtn" class="battle-start-btn" disabled>
+                <button id="startBattleBtn" class="battle-start-btn" disabled data-i18n="combat-start-btn">
                     ¡COMENZAR SIMULACIÓN!
                 </button>
                 <div class="battle-log-container">
-                    <div class="log-header">Registro de Combate</div>
+                    <div class="log-header" data-i18n="combat-log-title">Registro de Combate</div>
                     <div id="battleLog" class="battle-log">
-                        <p class="log-entry system">Selecciona dos Pokémon para comenzar la simulación.</p>
+                        <p class="log-entry system" data-i18n="combat-log-empty">Selecciona dos Pokémon para comenzar la
+                            simulación.</p>
                     </div>
                 </div>
             </div>
@@ -280,8 +298,10 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Datos proporcionados por <a href="https://pokeapi.co/" target="_blank" rel="noopener">PokéAPI</a> ·
-                Proyecto Pokedex</p>
+            <p><span data-i18n="footer-data">Datos proporcionados por</span> <a href="https://pokeapi.co/"
+                    target="_blank" rel="noopener">PokéAPI</a> ·
+                <span data-i18n="footer-project">Proyecto Pokedex</span>
+            </p>
         </footer>
     </div>
 

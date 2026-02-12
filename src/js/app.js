@@ -9,10 +9,107 @@ let currentPokemonData = null;
 let isShiny = false;
 let isMega = false;
 let currentCryUrl = null;
+let currentLang = 'es'; // 'es' or 'en'
 let allPokemonNames = []; // For autocomplete
 let megaVarieties = []; // To store mega evolution forms
 let basePokemonData = null; // To revert from mega form
 
+const TRANSLATIONS = {
+    es: {
+        'meta-description': "Pokédex — Busca las estadísticas base de cualquier Pokémon por nombre o número",
+        'title': "Pokédex — Estadísticas Base",
+        'logo-title': "Ir al inicio",
+        'subtitle': "Estadísticas Base",
+        'nav-search': "Buscar",
+        'nav-battle': "Combate",
+        'nav-pokedex': "Pokédex",
+        'nav-combat': "Simulador de Combate",
+        'search-placeholder': "Nombre o número del Pokémon...",
+        'search-btn': "Buscar",
+        'search-example': "Ejemplo",
+        'random-btn': "Aleatorio",
+        'loader-text': "Buscando Pokémon...",
+        'error-not-found': "Pokémon no encontrado",
+        'shiny-toggle': "Ver versión shiny",
+        'shiny-label': "Shiny",
+        'mega-toggle': "Mega Evolución",
+        'mega-label': "Mega",
+        'cry-toggle': "Reproducir grito",
+        'stats-title': "Estadísticas Base",
+        'stats-total': "Total",
+        'info-height': "Altura",
+        'info-weight': "Peso",
+        'info-exp': "Experiencia Base",
+        'info-abilities': "Habilidades",
+        'evo-title': "Cadena Evolutiva",
+        'nav-prev': "Anterior",
+        'nav-next': "Siguiente",
+        'combat-p1-title': "Tu Pokémon",
+        'combat-p2-title': "Oponente",
+        'combat-search-placeholder': "Buscar...",
+        'combat-p1-empty': "Selecciona un Pokémon",
+        'combat-p2-empty': "Selecciona un Oponente",
+        'combat-start-btn': "¡COMENZAR SIMULACIÓN!",
+        'combat-log-title': "Registro de Combate",
+        'combat-log-empty': "Selecciona dos Pokémon para comenzar la simulación.",
+        'footer-data': "Datos proporcionados por",
+        'footer-project': "Proyecto Pokedex",
+        // Stats mapping
+        'hp': 'PS',
+        'attack': 'Ataque',
+        'defense': 'Defensa',
+        'special-attack': 'At. Esp.',
+        'special-defense': 'Def. Esp.',
+        'speed': 'Velocidad'
+    },
+    en: {
+        'meta-description': "Pokédex — Search base stats for any Pokémon by name or number",
+        'title': "Pokédex — Base Stats",
+        'logo-title': "Go home",
+        'subtitle': "Base Stats",
+        'nav-search': "Search",
+        'nav-battle': "Battle",
+        'nav-pokedex': "Pokédex",
+        'nav-combat': "Combat Simulator",
+        'search-placeholder': "Pokémon name or number...",
+        'search-btn': "Search",
+        'search-example': "Example",
+        'random-btn': "Random",
+        'loader-text': "Searching for Pokémon...",
+        'error-not-found': "Pokémon not found",
+        'shiny-toggle': "View shiny version",
+        'shiny-label': "Shiny",
+        'mega-toggle': "Mega Evolution",
+        'mega-label': "Mega",
+        'cry-toggle': "Play cry",
+        'stats-title': "Base Stats",
+        'stats-total': "Total",
+        'info-height': "Height",
+        'info-weight': "Weight",
+        'info-exp': "Base Exp",
+        'info-abilities': "Abilities",
+        'evo-title': "Evolution Chain",
+        'nav-prev': "Previous",
+        'nav-next': "Next",
+        'combat-p1-title': "Your Pokémon",
+        'combat-p2-title': "Opponent",
+        'combat-search-placeholder': "Search...",
+        'combat-p1-empty': "Select a Pokémon",
+        'combat-p2-empty': "Select an Opponent",
+        'combat-start-btn': "START BATTLE!",
+        'combat-log-title': "Battle Log",
+        'combat-log-empty': "Select two Pokémon to start the simulation.",
+        'footer-data': "Data provided by",
+        'footer-project': "Pokedex Project",
+        // Stats mapping
+        'hp': 'HP',
+        'attack': 'Attack',
+        'defense': 'Defense',
+        'special-attack': 'Sp. Atk',
+        'special-defense': 'Sp. Def',
+        'speed': 'Speed'
+    }
+};
 
 // ========== DOM Elements ==========
 const searchInput = document.getElementById('searchInput');
@@ -41,6 +138,8 @@ const combatSearch2 = document.getElementById('combatSearch2');
 const combatRand1 = document.getElementById('combatRand1');
 const combatRand2 = document.getElementById('combatRand2');
 const startBattleBtn = document.getElementById('startBattleBtn');
+const langToggle = document.getElementById('langToggle');
+const currentLangDisplay = document.getElementById('currentLangDisplay');
 
 // ========== Initialize ==========
 document.addEventListener('DOMContentLoaded', () => {
@@ -137,6 +236,10 @@ function bindEvents() {
     if (combatRand2) combatRand2.addEventListener('click', () => handleCombatRandom(2));
     if (startBattleBtn) startBattleBtn.addEventListener('click', startBattle);
 
+    if (langToggle) {
+        langToggle.addEventListener('click', toggleLanguage);
+    }
+
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (!currentPokemonId) return;
@@ -146,12 +249,61 @@ function bindEvents() {
     });
 }
 
+// ========== Language Switcher ==========
+function toggleLanguage() {
+    currentLang = currentLang === 'es' ? 'en' : 'es';
+    if (currentLangDisplay) currentLangDisplay.textContent = currentLang.toUpperCase();
+
+    updateUILanguage();
+
+    // Refresh current pokemon if any
+    if (currentPokemonData) {
+        // Fetch specific species data for the new language
+        fetchPokemon(currentPokemonData.id);
+    }
+}
+
+function updateUILanguage() {
+    const texts = TRANSLATIONS[currentLang];
+
+    // Update text content for items with data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (texts[key]) {
+            el.textContent = texts[key];
+        }
+    });
+
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (texts[key]) {
+            el.placeholder = texts[key];
+        }
+    });
+
+    // Update titles (tooltips)
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (texts[key]) {
+            el.title = texts[key];
+        }
+    });
+
+    // Handle Title Tag specifically
+    document.title = texts['title'];
+
+    // Update meta description
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = texts['meta-description'];
+}
+
 // ========== Search Handler ==========
 async function handleSearch() {
     if (!searchInput) return;
     const query = searchInput.value.trim().toLowerCase();
     if (!query) {
-        showError('Por favor, introduce un nombre o número de Pokémon.');
+        showError(currentLang === 'es' ? 'Por favor, introduce un nombre o número de Pokémon.' : 'Please enter a Pokémon name or number.');
         return;
     }
     await fetchPokemon(query);
@@ -217,14 +369,11 @@ async function fetchPokemon(query) {
                     megaVarieties = speciesData.varieties.filter(v => v.pokemon.name.includes('-mega'));
                 }
 
-                // Get Spanish flavor text, fallback to English
-                const spanishEntry = speciesData.flavor_text_entries.find(
-                    e => e.language.name === 'es'
-                );
-                const englishEntry = speciesData.flavor_text_entries.find(
-                    e => e.language.name === 'en'
-                );
-                const entry = spanishEntry || englishEntry;
+                // Get flavor text based on currentLang
+                const entry = speciesData.flavor_text_entries.find(e => e.language.name === currentLang)
+                    || speciesData.flavor_text_entries.find(e => e.language.name === 'en')
+                    || speciesData.flavor_text_entries[0];
+
                 if (entry) {
                     description = entry.flavor_text
                         .replace(/\f/g, ' ')
@@ -246,9 +395,14 @@ async function fetchPokemon(query) {
         renderPokemon(pokemonData, description, isLegendary);
     } catch (err) {
         if (err.message === 'not_found') {
-            showError(`No se encontró ningún Pokémon con "${query}". Verifica el nombre o número.`);
+            const errorMsg = currentLang === 'es'
+                ? `No se encontró ningún Pokémon con "${query}". Verifica el nombre o número.`
+                : `No Pokémon found with "${query}". Please check the name or number.`;
+            showError(errorMsg);
         } else {
-            showError('Error al conectar con la API. Comprueba tu conexión a internet.');
+            showError(currentLang === 'es'
+                ? 'Error al conectar con la API. Comprueba tu conexión a internet.'
+                : 'API connection error. Please check your internet connection.');
         }
     } finally {
         hideLoader();
@@ -409,7 +563,9 @@ function renderPokemon(data, description, isLegendary = false) {
     }
 
     // Description
-    if (pokemonDesc) pokemonDesc.textContent = description || 'Sin descripción disponible.';
+    if (pokemonDesc) {
+        pokemonDesc.textContent = description || (currentLang === 'es' ? 'Sin descripción disponible.' : 'No description available.');
+    }
 
     // Stats
     let total = 0;
@@ -426,7 +582,7 @@ function renderPokemon(data, description, isLegendary = false) {
             const row = document.createElement('div');
             row.className = 'stat-row';
             row.innerHTML = `
-                <span class="stat-name">${STAT_NAMES[name] || name}</span>
+                <span class="stat-name">${TRANSLATIONS[currentLang][name] || name}</span>
                 <span class="stat-value">${value}</span>
                 <div class="stat-bar-bg">
                     <div class="stat-bar-fill ${cssClass}" style="width: 0%"></div>
@@ -710,7 +866,7 @@ async function handleCombatSearch(slot, query) {
         updateCombatCard(slot, data);
         checkBattleReady();
     } catch (e) {
-        alert('Pokemon no encontrado');
+        alert(currentLang === 'es' ? 'Pokémon no encontrado' : 'Pokémon not found');
     }
 }
 
@@ -746,12 +902,12 @@ function updateCombatCard(slot, data) {
     data.stats.forEach(s => stats[s.stat.name] = s.base_stat);
 
     statsContainer.innerHTML = `
-        <div>ATK: ${stats.attack}</div>
-        <div>DEF: ${stats.defense}</div>
-        <div>SPA: ${stats['special-attack']}</div>
-        <div>SPD: ${stats['special-defense']}</div>
-        <div>SPE: ${stats.speed}</div>
-        <div>HP: ${stats.hp}</div>
+        <div>${TRANSLATIONS[currentLang]['attack']}: ${stats.attack}</div>
+        <div>${TRANSLATIONS[currentLang]['defense']}: ${stats.defense}</div>
+        <div>${TRANSLATIONS[currentLang]['special-attack']}: ${stats['special-attack']}</div>
+        <div>${TRANSLATIONS[currentLang]['special-defense']}: ${stats['special-defense']}</div>
+        <div>${TRANSLATIONS[currentLang]['speed']}: ${stats.speed}</div>
+        <div>${TRANSLATIONS[currentLang]['hp']}: ${stats.hp}</div>
     `;
 }
 
@@ -804,7 +960,10 @@ async function startBattle() {
         await wait(500);
     }
 
-    addLog('win', `¡${winner.name} ha ganado el combate!`);
+    const winMsg = currentLang === 'es'
+        ? `¡${winner.name} ha ganado el combate!`
+        : `${winner.name} has won the battle!`;
+    addLog('win', winMsg);
     startBattleBtn.disabled = false;
 }
 
@@ -836,9 +995,16 @@ async function performAttack(attacker, defender, slot) {
     updateHpBar(defenderSlot, hpPercent);
 
     // Log
-    const critText = crit > 1 ? ' ¡GOLPE CRÍTICO!' : '';
-    const moveType = isSpecial ? 'ataque especial' : 'ataque físico';
-    addLog(slot === 1 ? 'p1' : 'p2', `${attacker.name} usa ${moveType} y hace ${damage} de daño.${critText}`);
+    const critText = crit > 1 ? (currentLang === 'es' ? ' ¡GOLPE CRÍTICO!' : ' CRITICAL HIT!') : '';
+    const moveType = isSpecial
+        ? (currentLang === 'es' ? 'ataque especial' : 'special attack')
+        : (currentLang === 'es' ? 'ataque físico' : 'physical attack');
+
+    const attackMsg = currentLang === 'es'
+        ? `${attacker.name} usa ${moveType} y hace ${damage} de daño.${critText}`
+        : `${attacker.name} uses ${moveType} and deals ${damage} damage.${critText}`;
+
+    addLog(slot === 1 ? 'p1' : 'p2', attackMsg);
 
     await wait(800);
 }
@@ -874,13 +1040,22 @@ function hexToRGBA(hex, alpha) {
 
 function translateType(type) {
     const translations = {
-        normal: 'Normal', fire: 'Fuego', water: 'Agua', electric: 'Eléctrico',
-        grass: 'Planta', ice: 'Hielo', fighting: 'Lucha', poison: 'Veneno',
-        ground: 'Tierra', flying: 'Volador', psychic: 'Psíquico', bug: 'Bicho',
-        rock: 'Roca', ghost: 'Fantasma', dragon: 'Dragón', dark: 'Siniestro',
-        steel: 'Acero', fairy: 'Hada',
+        es: {
+            normal: 'Normal', fire: 'Fuego', water: 'Agua', electric: 'Eléctrico',
+            grass: 'Planta', ice: 'Hielo', fighting: 'Lucha', poison: 'Veneno',
+            ground: 'Tierra', flying: 'Volador', psychic: 'Psíquico', bug: 'Bicho',
+            rock: 'Roca', ghost: 'Fantasma', dragon: 'Dragón', dark: 'Siniestro',
+            steel: 'Acero', fairy: 'Hada',
+        },
+        en: {
+            normal: 'Normal', fire: 'Fire', water: 'Water', electric: 'Electric',
+            grass: 'Grass', ice: 'Ice', fighting: 'Fighting', poison: 'Poison',
+            ground: 'Ground', flying: 'Flying', psychic: 'Psychic', bug: 'Bug',
+            rock: 'Rock', ghost: 'Ghost', dragon: 'Dragon', dark: 'Dark',
+            steel: 'Steel', fairy: 'Fairy',
+        }
     };
-    return translations[type] || type;
+    return translations[currentLang]?.[type] || translations['en']?.[type] || type;
 }
 
 // ========== Autocomplete ==========
