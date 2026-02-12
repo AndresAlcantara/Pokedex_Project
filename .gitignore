@@ -1,0 +1,12 @@
+# Keys and sensitive files
+txt
+txt.pub
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Project local files
+node_modules/
+dist/
+.env

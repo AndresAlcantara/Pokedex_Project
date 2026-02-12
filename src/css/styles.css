@@ -7,6 +7,10 @@
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none !important;
+}
+
 :root {
     --bg-primary: #0f0f1a;
     --bg-secondary: #1a1a2e;
@@ -208,30 +212,40 @@ body.legendary .particle {
 
 /* ========== Header ========== */
 .header {
-    text-align: center;
-    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
     animation: fadeInDown 0.6s ease-out;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0.8rem;
-    margin-bottom: 0.4rem;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
 }
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo:hover .pokeball-icon {
+    transform: rotate(20deg);
+}
+
+.logo:active {
+    transform: scale(0.98);
+}
+
 
 .logo h1 {
     font-size: 2.6rem;
@@ -317,6 +331,9 @@ body.legendary .particle {
     width: 100%;
     margin-bottom: 2rem;
     animation: fadeInUp 0.6s ease-out 0.15s both;
+    position: relative;
+    z-index: 100;
+    /* Force entire section above pokemon card */
 }
 
 @keyframes fadeInUp {
@@ -344,6 +361,9 @@ body.legendary .particle {
     padding: 0.4rem 0.4rem 0.4rem 1.2rem;
     gap: 0.6rem;
     transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    /* For autocomplete */
+    z-index: 10;
 }
 
 .search-input-wrapper:focus-within {
@@ -688,12 +708,18 @@ body.legendary .particle {
     height: 160px;
     image-rendering: pixelated;
     filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.3));
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, filter 0.3s ease;
     z-index: 1;
+    cursor: pointer;
 }
 
 .pokemon-image:hover {
     transform: scale(1.1) translateY(-5px);
+    filter: drop-shadow(0 8px 30px var(--accent-glow));
+}
+
+.pokemon-image:active {
+    transform: scale(1.05) translateY(-2px);
 }
 
 .pokemon-name {
@@ -723,41 +749,7 @@ body.legendary .particle {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Shiny Toggle */
-.shiny-toggle {
-    position: absolute;
-    top: 1.2rem;
-    left: 1.5rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.35rem 0.65rem;
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
 
-.shiny-toggle:hover {
-    background: rgba(255, 215, 0, 0.15);
-    border-color: rgba(255, 215, 0, 0.4);
-    color: #ffd700;
-}
-
-.shiny-toggle.active {
-    background: rgba(255, 215, 0, 0.2);
-    border-color: rgba(255, 215, 0, 0.5);
-    color: #ffd700;
-}
-
-.shiny-toggle .sparkle {
-    font-size: 0.9rem;
-}
 
 /* Pokemon Description */
 .pokemon-description {
@@ -985,14 +977,317 @@ body.legendary .particle {
     --bar-color-end: #8e44ad;
 }
 
-.stat-bar-fill.stat-sp-defense {
-    --bar-color-start: #3498db;
-    --bar-color-end: #2980b9;
+/* ========== Evolution Chain ========== */
+.evolution-section {
+    padding: 1.8rem 2rem;
+    border-top: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.evolution-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.evolution-chain {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.evolution-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.evolution-item:hover {
+    transform: translateY(-5px);
+}
+
+.evolution-image-container {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    padding: 5px;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.evolution-item:hover .evolution-image-container {
+    border-color: var(--accent);
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.evolution-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.evolution-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: capitalize;
+}
+
+.evolution-item.active .evolution-image-container {
+    border-color: var(--accent);
+    background: rgba(108, 92, 231, 0.15);
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.evolution-item.active .evolution-name {
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent-glow);
+}
+
+.evolution-arrow {
+    color: var(--text-muted);
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin: 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========== Action Buttons (Shiny/Cry) ========== */
+.header-actions {
+    position: absolute;
+    top: 1.2rem;
+    left: 1.5rem;
+    display: flex;
+    gap: 0.6rem;
+}
+
+.action-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.65rem;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Shiny toggle specific */
+.action-btn#shinyToggle:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.4);
+    color: #ffd700;
+}
+
+.action-btn#shinyToggle.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+}
+
+.action-btn .sparkle,
+.action-btn .mega-icon {
+    font-size: 0.9rem;
+}
+
+/* Mega toggle specific */
+.action-btn#megaToggle:hover {
+    background: rgba(162, 155, 254, 0.15);
+    border-color: rgba(162, 155, 254, 0.4);
+    color: #a29bfe;
+}
+
+.action-btn#megaToggle.active {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    border-color: #6c5ce7;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(108, 92, 231, 0.4);
+}
+
+.action-btn#megaToggle.active .mega-icon {
+    animation: rotateMega 2s linear infinite;
+}
+
+@keyframes rotateMega {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Cry button specific */
+.action-btn#cryBtn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+.action-btn#cryBtn:hover {
+    background: rgba(52, 152, 219, 0.15);
+    border-color: rgba(52, 152, 219, 0.4);
+    color: #3498db;
+}
+
+.action-btn#cryBtn.playing {
+    background: rgba(52, 152, 219, 0.2);
+    border-color: rgba(52, 152, 219, 0.5);
+    color: #3498db;
+    animation: soundPulse 0.5s infinite alternate;
+}
+
+@keyframes soundPulse {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.05);
+    }
 }
 
 .stat-bar-fill.stat-speed {
     --bar-color-start: #e91e63;
     --bar-color-end: #c2185b;
+}
+
+/* ========== Legendary Effects ========== */
+body.legendary::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.5) 90%);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.4;
+}
+
+.lightning-bolt {
+    position: absolute;
+    pointer-events: none;
+    z-index: 2;
+    /* On top of background but below UI if needed, but actually z-index 0 was better for behind card */
+    z-index: 0;
+    filter: drop-shadow(0 0 5px var(--bolt-color));
+}
+
+.lightning-svg {
+    width: 200px;
+    height: 400px;
+    overflow: visible;
+}
+
+.lightning-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: boltStrike 0.3s linear forwards, boltFade 0.1s 0.3s linear forwards;
+}
+
+@keyframes boltStrike {
+    0% {
+        stroke-dashoffset: 1000;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes boltFade {
+    to {
+        opacity: 0;
+    }
+}
+
+/* Legendary Pokemon Depth */
+.legendary .pokemon-image-container {
+    perspective: 1000px;
+    z-index: 5;
+}
+
+.legendary .pokemon-image {
+    /* Using standard shadow but slightly deeper, without excessive blur */
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.6));
+    /* Removing scale to prevent blur. Adding translateZ generally keeps it sharp */
+    transform: translateZ(20px);
+    transition: transform 0.3s ease;
+    will-change: transform;
+    /* Force crisp rendering if possible */
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Subtle levitation for depth, keeping scale 1 */
+.legendary .pokemon-image {
+    animation: legendaryFloat 6s ease-in-out infinite;
+}
+
+@keyframes legendaryFloat {
+
+    0%,
+    100% {
+        transform: translateZ(20px) translateY(0);
+    }
+
+    50% {
+        transform: translateZ(20px) translateY(-15px);
+    }
+}
+
+/* Screen Shake for Legendary Load */
+.legendary .app {
+    animation: legendaryShake 0.6s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes legendaryShake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-2px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(2px, 0, 0);
+    }
 }
 
 /* ========== Responsive ========== */
@@ -1043,4 +1338,395 @@ body.legendary .particle {
         font-size: 0.7rem;
         padding: 0.25rem 0.5rem;
     }
+
+    .header {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .logo {
+        justify-content: center;
+    }
+
+    .main-nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .combat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vs-badge {
+        margin: 1rem 0;
+    }
+}
+
+/* ========== Main Navigation ========== */
+.main-nav {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+.nav-item.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.nav-item svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* ========== Combat View ========== */
+.view-container {
+    width: 100%;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.view-container.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.combat-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.combatant-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slot-header h3 {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.combat-search-box {
+    display: flex;
+    gap: 0.5rem;
+    position: relative;
+    /* For autocomplete */
+    z-index: 10;
+}
+
+.combat-search-box input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-sm);
+    width: 140px;
+    font-size: 0.9rem;
+}
+
+.combat-search-box button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    width: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.combat-search-box button:hover {
+    background: var(--accent);
+}
+
+/* Combat Card (Glassmorphism) */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.glass-panel.empty {
+    border-style: dashed;
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.empty-state-msg {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.combat-content {
+    width: 100%;
+    text-align: center;
+}
+
+.combat-content.hidden {
+    display: none;
+}
+
+.combat-img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
+    margin-bottom: 1rem;
+    animation: combatFloat 3s ease-in-out infinite;
+}
+
+@keyframes combatFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.combat-info h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+
+.hp-bar-container {
+    width: 100%;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    width: 100%;
+    transition: width 0.5s ease, background 0.3s ease;
+}
+
+.combat-stats-mini {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.8rem;
+    border-radius: var(--radius-md);
+}
+
+/* VS Badge */
+.vs-badge {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.3);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+}
+
+/* Battle Controls */
+.battle-section {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.battle-start-btn {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+}
+
+.battle-start-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.6);
+}
+
+.battle-start-btn:disabled {
+    background: var(--text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.battle-log-container {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    text-align: left;
+}
+
+.log-header {
+    background: var(--bg-card);
+    padding: 0.8rem 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.battle-log {
+    height: 200px;
+    overflow-y: auto;
+    padding: 1rem;
+    font-family: 'Consolas', monospace;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.log-entry {
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid transparent;
+}
+
+.log-entry.system {
+    border-left-color: var(--text-muted);
+    color: var(--text-secondary);
+}
+
+.log-entry.p1 {
+    border-left-color: var(--blue);
+}
+
+.log-entry.p2 {
+    border-left-color: var(--red);
+}
+
+.log-entry.win {
+    border-left-color: var(--yellow);
+    background: rgba(241, 196, 15, 0.1);
+    color: var(--yellow);
+    font-weight: bold;
+}
+
+/* Autocomplete Lists */
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid var(--border);
+    z-index: 9999;
+    top: 105%;
+    left: 0;
+    right: 0;
+    background: #131b31 !important;
+    /* Force solid background for perfect legibility */
+    backdrop-filter: none !important;
+    /* Remove blur to prevent transparency leaks */
+    border-radius: var(--radius-md);
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.15s ease-out;
+}
+
+.autocomplete-item {
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    transition: background 0.2s, padding-left 0.2s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-active {
+    background: var(--surface);
+    color: var(--text-primary);
+    padding-left: 1.2rem;
+    /* Slide effect */
+}
+
+.autocomplete-item strong {
+    color: var(--accent);
+}
+
+/* Scrollbar for autocomplete */
+.autocomplete-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.autocomplete-items::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
 }
