@@ -1733,18 +1733,14 @@ body.legendary::before {
 
 /* Language Toggle */
 .lang-btn {
-    position: absolute !important;
-    top: 1.2rem;
-    right: 1.2rem;
-    padding: 0.4rem 0.6rem !important;
+    padding: 0.3rem 0.5rem !important;
     background: var(--surface) !important;
     border: 1px solid var(--border) !important;
     font-weight: 700 !important;
     text-transform: uppercase;
     min-width: auto;
-    font-size: 0.75rem !important;
-    opacity: 0.7;
-    z-index: 100;
+    font-size: 0.7rem !important;
+    opacity: 0.6;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -1755,12 +1751,11 @@ body.legendary::before {
 .lang-btn:hover {
     opacity: 1;
     background: var(--surface-hover) !important;
-    transform: translateY(-1px);
 }
 
 .lang-btn svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
 }
 
 #currentLangDisplay {
