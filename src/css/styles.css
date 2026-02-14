@@ -1386,7 +1386,21 @@ body.legendary::before {
     }
 
     .vs-badge {
-        margin: 1rem 0;
+        margin: 1.5rem auto;
+        order: 0;
+    }
+
+    .combatant-slot {
+        width: 100%;
+    }
+
+    .slot-header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .combat-search-box input {
+        max-width: 100%;
     }
 }
 
@@ -1487,6 +1501,8 @@ body.legendary::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
 }
 
 .slot-header h3 {
@@ -1511,7 +1527,8 @@ body.legendary::before {
     padding: 0.4rem 0.8rem;
     border-radius: var(--radius-sm);
     width: 100%;
-    max-width: 140px;
+    min-width: 120px;
+    max-width: 180px;
     font-size: 0.9rem;
 }
 
@@ -1610,7 +1627,7 @@ body.legendary::before {
 
 .combat-stats-mini {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 0.5rem;
     font-size: 0.85rem;
     color: var(--text-secondary);
