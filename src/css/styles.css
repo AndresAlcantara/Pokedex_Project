@@ -248,7 +248,7 @@ body.legendary .particle {
 
 
 .logo h1 {
-    font-size: 2.6rem;
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
     font-weight: 800;
     background: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8);
     -webkit-background-clip: text;
@@ -860,7 +860,7 @@ body.legendary .particle {
 
 .info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1rem;
 }
 
@@ -1339,6 +1339,33 @@ body.legendary::before {
         padding: 0.25rem 0.5rem;
     }
 
+    .header-actions {
+        position: relative;
+        top: 0;
+        left: 0;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 1.5rem;
+    }
+
+    .card-number {
+        position: static;
+        margin-bottom: 0.5rem;
+        order: -1;
+    }
+
+    .pokemon-image {
+        width: 140px;
+        height: 140px;
+    }
+
     .header {
         flex-direction: column;
         gap: 1.5rem;
@@ -1360,6 +1387,26 @@ body.legendary::before {
 
     .vs-badge {
         margin: 1rem 0;
+    }
+}
+
+@media (max-width: 380px) {
+    .logo h1 {
+        font-size: 1.6rem;
+    }
+
+    .nav-item {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .stat-row {
+        grid-template-columns: 65px 32px 1fr;
+        font-size: 0.75rem;
+    }
+
+    .total-value {
+        font-size: 1.2rem;
     }
 }
 
@@ -1463,7 +1510,8 @@ body.legendary::before {
     color: var(--text-primary);
     padding: 0.4rem 0.8rem;
     border-radius: var(--radius-sm);
-    width: 140px;
+    width: 100%;
+    max-width: 140px;
     font-size: 0.9rem;
 }
 
