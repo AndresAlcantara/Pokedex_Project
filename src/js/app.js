@@ -12,7 +12,9 @@ let currentCryUrl = null;
 let currentLang = 'es'; // 'es' or 'en'
 let allPokemonNames = []; // For autocomplete
 let megaVarieties = []; // To store mega evolution forms
-let basePokemonData = null; // To revert from mega form
+let regionalVarieties = []; // To store regional forms (Alola, Galar, etc.)
+let currentRegionalIndex = -1; // -1 means base form
+let basePokemonData = null; // To revert from mega/regional form
 
 const TRANSLATIONS = {
     es: {
@@ -68,7 +70,9 @@ const TRANSLATIONS = {
         'battle-physical': "ataque físico",
         'battle-attack-msg': "{attacker} usa {type} y hace {damage} de daño.{crit}",
         'no-description': "Sin descripción disponible.",
-        'lang-toggle-title': "Cambiar idioma"
+        'lang-toggle-title': "Cambiar idioma",
+        'regional-toggle': "Ver formas regionales",
+        'regional-label': "Regional"
     },
     en: {
         'meta-description': "Pokédex — Search base stats for any Pokémon by name or number",
@@ -123,7 +127,9 @@ const TRANSLATIONS = {
         'battle-physical': "physical attack",
         'battle-attack-msg': "{attacker} uses {type} and deals {damage} damage.{crit}",
         'no-description': "No description available.",
-        'lang-toggle-title': "Change language"
+        'lang-toggle-title': "Change language",
+        'regional-toggle': "View regional forms",
+        'regional-label': "Regional"
     },
     ja: {
         'meta-description': "ポケデックス — 名前か番号でポケモンの基本ステータスを検索",
@@ -178,7 +184,9 @@ const TRANSLATIONS = {
         'battle-physical': "ぶつりこうげき",
         'battle-attack-msg': "{attacker} は {type} をくりだし、 {damage} ダメージ をあたえた！{crit}",
         'no-description': "説明はありません。",
-        'lang-toggle-title': "言語を切り替える"
+        'lang-toggle-title': "言語を切り替える",
+        'regional-toggle': "リージョンフォームを表示",
+        'regional-label': "リージョン"
     },
     de: {
         'meta-description': "Pokédex — Suche Basiswerte for jedes Pokémon nach Name oder Nummer",
@@ -233,7 +241,9 @@ const TRANSLATIONS = {
         'battle-physical': "Physischer Angriff",
         'battle-attack-msg': "{attacker} nutzt {type} und fügt {damage} Schaden zu.{crit}",
         'no-description': "Keine Beschreibung verfügbar.",
-        'lang-toggle-title': "Sprache ändern"
+        'lang-toggle-title': "Sprache ändern",
+        'regional-toggle': "Regionalformen anzeigen",
+        'regional-label': "Regional"
     },
     fr: {
         'meta-description': "Pokédex — Recherchez les statistiques de base de n'importe quel Pokémon par nom ou numéro",
@@ -288,7 +298,9 @@ const TRANSLATIONS = {
         'battle-physical': "attaque physique",
         'battle-attack-msg': "{attacker} utilise {type} et inflige {damage} dégâts.{crit}",
         'no-description': "Aucune description disponible.",
-        'lang-toggle-title': "Changer de langue"
+        'lang-toggle-title': "Changer de langue",
+        'regional-toggle': "Voir les formes régionales",
+        'regional-label': "Régional"
     },
     it: {
         'meta-description': "Pokédex — Cerca le statistiche di base di qualsiasi Pokémon per nome o numero",
@@ -343,7 +355,9 @@ const TRANSLATIONS = {
         'battle-physical': "attacco fisico",
         'battle-attack-msg': "{attacker} usa {type} e infligge {damage} danni.{crit}",
         'no-description': "Nessuna descrizione disponibile.",
-        'lang-toggle-title': "Cambia lingua"
+        'lang-toggle-title': "Cambia lingua",
+        'regional-toggle': "Visualizza forme regionali",
+        'regional-label': "Regionale"
     }
 };
 // ========== DOM Elements ==========
@@ -360,6 +374,7 @@ const evolutionChain = document.getElementById('evolutionChain');
 const shinyToggle = document.getElementById('shinyToggle');
 const nextBtn = document.getElementById('nextBtn');
 const megaToggle = document.getElementById('megaToggle');
+const regionalToggle = document.getElementById('regionalToggle');
 const pokemonImage = document.getElementById('pokemonImage');
 const logoHome = document.getElementById('logoHome');
 
@@ -445,6 +460,10 @@ function bindEvents() {
 
     if (megaToggle) {
         megaToggle.addEventListener('click', toggleMega);
+    }
+
+    if (regionalToggle) {
+        regionalToggle.addEventListener('click', toggleRegional);
     }
 
     if (pokemonImage) {
@@ -570,8 +589,10 @@ async function fetchPokemon(query) {
     hideCard();
     isShiny = false;
     isMega = false;
+    currentRegionalIndex = -1;
     currentCryUrl = null;
     megaVarieties = [];
+    regionalVarieties = [];
     basePokemonData = null;
 
     try {
@@ -616,9 +637,17 @@ async function fetchPokemon(query) {
                 extraInfo.habitat = speciesData.habitat?.name || '—';
                 extraInfo.growthRate = speciesData.growth_rate?.name || '—';
 
-                // Detection of Mega Evolutions
+                // Detection of Mega Evolutions and Regional Forms
                 if (speciesData.varieties) {
                     megaVarieties = speciesData.varieties.filter(v => v.pokemon.name.includes('-mega'));
+                    regionalVarieties = speciesData.varieties.filter(v =>
+                        !v.is_default && (
+                            v.pokemon.name.includes('-alola') ||
+                            v.pokemon.name.includes('-galar') ||
+                            v.pokemon.name.includes('-hisui') ||
+                            v.pokemon.name.includes('-paldea')
+                        )
+                    );
                 }
 
                 // Get flavor text based on currentLang
@@ -809,6 +838,30 @@ function renderPokemon(data, description, isLegendary = false, extraInfo = null)
         }
     }
 
+    // Regional Toggle Visibility
+    if (regionalToggle) {
+        if (regionalVarieties.length > 0) {
+            regionalToggle.classList.remove('hidden');
+            regionalToggle.classList.toggle('active', currentRegionalIndex !== -1);
+
+            if (currentRegionalIndex === -1) {
+                regionalToggle.innerHTML = '<span class="regional-icon">🌍</span> ' + TRANSLATIONS[currentLang]['regional-label'];
+            } else {
+                // Determine which region
+                const regName = regionalVarieties[currentRegionalIndex].pokemon.name;
+                let regionLabel = 'Regional';
+                if (regName.includes('-alola')) regionLabel = 'Alola';
+                else if (regName.includes('-galar')) regionLabel = 'Galar';
+                else if (regName.includes('-hisui')) regionLabel = 'Hisui';
+                else if (regName.includes('-paldea')) regionLabel = 'Paldea';
+
+                regionalToggle.innerHTML = `<span class="regional-icon">🔄</span> ${regionLabel}`;
+            }
+        } else {
+            regionalToggle.classList.add('hidden');
+        }
+    }
+
     // Name & Number
     if (pokemonName) pokemonName.textContent = data.name;
     if (pokemonNumber) pokemonNumber.textContent = '#' + String(data.id).padStart(3, '0');
@@ -956,6 +1009,60 @@ async function toggleMega() {
             const isLegendary = document.body.classList.contains('legendary');
             renderPokemon(currentPokemonData, desc, isLegendary);
         }
+    }
+}
+
+// ========== Regional Form Toggle ==========
+async function toggleRegional() {
+    if (!currentPokemonData || regionalVarieties.length === 0) return;
+
+    try {
+        showLoader();
+
+        // Cycle: -1 -> 0 -> 1 -> ... -> last -> -1
+        currentRegionalIndex++;
+        if (currentRegionalIndex >= regionalVarieties.length) {
+            currentRegionalIndex = -1;
+        }
+
+        if (currentRegionalIndex === -1) {
+            // Switch back to Base
+            if (basePokemonData) {
+                currentPokemonData = basePokemonData;
+                basePokemonData = null;
+            }
+        } else {
+            // Switch to Regional Variety
+            const varietyName = regionalVarieties[currentRegionalIndex].pokemon.name;
+            const res = await fetch(API_BASE + varietyName);
+            if (!res.ok) throw new Error('Regional form data not found');
+
+            const varietyData = await res.json();
+
+            if (!basePokemonData) {
+                basePokemonData = currentPokemonData; // Store original base
+            }
+
+            // Keep actual ID from base if variety has a huge weird ID (sometimes varieties do)
+            // But PokeAPI varieties usually have their own stats etc correctly
+            currentPokemonData = varietyData;
+        }
+
+        // Re-render
+        const desc = document.getElementById('pokemonDescription').textContent;
+        const isLegendary = document.body.classList.contains('legendary');
+
+        // Ensure we keep the original ID for navigation if it's a variety
+        if (basePokemonData && currentRegionalIndex !== -1) {
+            currentPokemonData.id = basePokemonData.id;
+        }
+
+        renderPokemon(currentPokemonData, desc, isLegendary);
+    } catch (e) {
+        console.error(e);
+        showError('No se pudo cargar la forma regional.');
+    } finally {
+        hideLoader();
     }
 }
 

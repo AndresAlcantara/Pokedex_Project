@@ -1131,6 +1131,20 @@ body.legendary .particle {
     animation: rotateMega 2s linear infinite;
 }
 
+/* Regional toggle specific */
+.action-btn#regionalToggle:hover {
+    background: rgba(46, 204, 113, 0.15);
+    border-color: rgba(46, 204, 113, 0.4);
+    color: #2ecc71;
+}
+
+.action-btn#regionalToggle.active {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border-color: #27ae60;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+}
+
 @keyframes rotateMega {
     from {
         transform: rotate(0deg);
