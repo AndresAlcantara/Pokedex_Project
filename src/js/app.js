@@ -72,7 +72,13 @@ const TRANSLATIONS = {
         'no-description': "Sin descripción disponible.",
         'lang-toggle-title': "Cambiar idioma",
         'regional-toggle': "Ver formas regionales",
-        'regional-label': "Regional"
+        'regional-label': "Regional",
+        'competitive-title': "Análisis Competitivo",
+        'comp-effectiveness': "Efectividad de Tipos",
+        'comp-sets': "Estrategias Recomendadas (Gen 9)",
+        'loading-sets': "Cargando datos de Showdown...",
+        'no-sets-found': "No se encontraron estrategias para este Pokémon.",
+        'item': "Objeto", 'nature': "Naturaleza", 'ability': "Habilidad", 'moves': "Movimientos"
     },
     en: {
         'meta-description': "Pokédex — Search base stats for any Pokémon by name or number",
@@ -129,7 +135,13 @@ const TRANSLATIONS = {
         'no-description': "No description available.",
         'lang-toggle-title': "Change language",
         'regional-toggle': "View regional forms",
-        'regional-label': "Regional"
+        'regional-label': "Regional",
+        'competitive-title': "Competitive Analysis",
+        'comp-effectiveness': "Type Effectiveness",
+        'comp-sets': "Recommended Strategies (Gen 9)",
+        'loading-sets': "Loading Showdown data...",
+        'no-sets-found': "No strategies found for this Pokémon.",
+        'item': "Item", 'nature': "Nature", 'ability': "Ability", 'moves': "Moves"
     },
     ja: {
         'meta-description': "ポケデックス — 名前か番号でポケモンの基本ステータスを検索",
@@ -186,7 +198,13 @@ const TRANSLATIONS = {
         'no-description': "説明はありません。",
         'lang-toggle-title': "言語を切り替える",
         'regional-toggle': "リージョンフォームを表示",
-        'regional-label': "リージョン"
+        'regional-label': "リージョン",
+        'competitive-title': "対戦分析",
+        'comp-effectiveness': "タイプの相性",
+        'comp-sets': "おすすめの戦略 (第9世代)",
+        'loading-sets': "Showdownデータを読み込み中...",
+        'no-sets-found': "このポケモンの戦略が見つかりませんでした。",
+        'item': "持ち物", 'nature': "性格", 'ability': "特性", 'moves': "技"
     },
     de: {
         'meta-description': "Pokédex — Suche Basiswerte for jedes Pokémon nach Name oder Nummer",
@@ -243,7 +261,13 @@ const TRANSLATIONS = {
         'no-description': "Keine Beschreibung verfügbar.",
         'lang-toggle-title': "Sprache ändern",
         'regional-toggle': "Regionalformen anzeigen",
-        'regional-label': "Regional"
+        'regional-label': "Regional",
+        'competitive-title': "Wettbewerbsanalyse",
+        'comp-effectiveness': "Typeffektivität",
+        'comp-sets': "Empfohlene Strategien (Gen 9)",
+        'loading-sets': "Showdown-Daten werden geladen...",
+        'no-sets-found': "Keine Strategien für dieses Pokémon gefunden.",
+        'item': "Item", 'nature': "Wesen", 'ability': "Fähigkeit", 'moves': "Attacken"
     },
     fr: {
         'meta-description': "Pokédex — Recherchez les statistiques de base de n'importe quel Pokémon par nom ou numéro",
@@ -300,7 +324,13 @@ const TRANSLATIONS = {
         'no-description': "Aucune description disponible.",
         'lang-toggle-title': "Changer de langue",
         'regional-toggle': "Voir les formes régionales",
-        'regional-label': "Régional"
+        'regional-label': "Régional",
+        'competitive-title': "Analyse Compétitive",
+        'comp-effectiveness': "Efficacité des Types",
+        'comp-sets': "Stratégies Recommandées (Gen 9)",
+        'loading-sets': "Chargement des données Showdown...",
+        'no-sets-found': "Aucune stratégie trouvée pour ce Pokémon.",
+        'item': "Objet", 'nature': "Nature", 'ability': "Talent", 'moves': "Capacités"
     },
     it: {
         'meta-description': "Pokédex — Cerca le statistiche di base di qualsiasi Pokémon per nome o numero",
@@ -357,7 +387,13 @@ const TRANSLATIONS = {
         'no-description': "Nessuna descrizione disponibile.",
         'lang-toggle-title': "Cambia lingua",
         'regional-toggle': "Visualizza forme regionali",
-        'regional-label': "Regionale"
+        'regional-label': "Regionale",
+        'competitive-title': "Analisi Competitiva",
+        'comp-effectiveness': "Efficacia dei Tipi",
+        'comp-sets': "Strategie Consigliate (Gen 9)",
+        'loading-sets': "Caricamento dati Showdown...",
+        'no-sets-found': "Nessuna strategia trovata per questo Pokémon.",
+        'item': "Strumento", 'nature': "Natura", 'ability': "Abilità", 'moves': "Mosse"
     }
 };
 // ========== DOM Elements ==========
@@ -375,6 +411,9 @@ const shinyToggle = document.getElementById('shinyToggle');
 const nextBtn = document.getElementById('nextBtn');
 const megaToggle = document.getElementById('megaToggle');
 const regionalToggle = document.getElementById('regionalToggle');
+const competitiveSection = document.getElementById('competitiveSection');
+const effectivenessGrid = document.getElementById('effectivenessGrid');
+const setsContainer = document.getElementById('setsContainer');
 const pokemonImage = document.getElementById('pokemonImage');
 const logoHome = document.getElementById('logoHome');
 
@@ -946,6 +985,8 @@ function renderPokemon(data, description, isLegendary = false, extraInfo = null)
     if (prevBtn) prevBtn.disabled = data.id <= 1;
     if (nextBtn) nextBtn.disabled = data.id >= MAX_POKEMON;
 
+    renderCompetitiveAnalysis(data);
+
     showCard();
 }
 
@@ -1066,7 +1107,124 @@ async function toggleRegional() {
     }
 }
 
-// ========== Play Cry ==========
+// ========== Competitive Analysis Logic ==========
+async function renderCompetitiveAnalysis(data) {
+    if (!competitiveSection) return;
+    competitiveSection.style.display = 'block';
+
+    renderTypeEffectiveness(data.types);
+    renderCompetitiveSets(data.name);
+}
+
+async function renderTypeEffectiveness(types) {
+    if (!effectivenessGrid) return;
+    effectivenessGrid.innerHTML = '<p class="loading-sets">...</p>';
+
+    const multipliers = {};
+    const typeNames = Object.keys(TYPE_COLORS);
+    typeNames.forEach(t => multipliers[t] = 1);
+
+    try {
+        const typeDataPromises = types.map(t => fetch(t.type.url).then(res => res.json()));
+        const typeDataArray = await Promise.all(typeDataPromises);
+
+        typeDataArray.forEach(data => {
+            const rel = data.damage_relations;
+            rel.double_damage_from.forEach(t => multipliers[t.name] *= 2);
+            rel.half_damage_from.forEach(t => multipliers[t.name] *= 0.5);
+            rel.no_damage_from.forEach(t => multipliers[t.name] *= 0);
+        });
+
+        effectivenessGrid.innerHTML = '';
+
+        // Sort types by multiplier (highest first)
+        const sortedTypes = Object.entries(multipliers)
+            .filter(([_, m]) => m !== 1)
+            .sort((a, b) => b[1] - a[1]);
+
+        if (sortedTypes.length === 0) {
+            effectivenessGrid.innerHTML = '<p class="no-sets">Neutro a todos los tipos.</p>';
+            return;
+        }
+
+        sortedTypes.forEach(([type, mult]) => {
+            const item = document.createElement('div');
+            item.className = 'eff-item';
+
+            const color = TYPE_COLORS[type]?.bg || '#999';
+            const multClass = `mult-${mult.toString().replace('.', '-')}x`;
+
+            item.innerHTML = `
+                <span class="eff-label" style="background: ${color}">${translateType(type)}</span>
+                <span class="eff-multiplier ${multClass}">${mult}x</span>
+            `;
+            effectivenessGrid.appendChild(item);
+        });
+
+    } catch (e) {
+        console.error('Error calculating effectiveness:', e);
+        effectivenessGrid.innerHTML = '<p class="no-sets">Error al cargar efectividad.</p>';
+    }
+}
+
+let showdownSetsCache = null;
+
+async function renderCompetitiveSets(pokemonName) {
+    if (!setsContainer) return;
+    setsContainer.innerHTML = `<p class="loading-sets">${TRANSLATIONS[currentLang]['loading-sets']}</p>`;
+
+    try {
+        if (!showdownSetsCache) {
+            const res = await fetch('https://play.pokemonshowdown.com/data/sets/gen9.json');
+            showdownSetsCache = await res.json();
+        }
+
+        // Standardize name for Showdown (e.g., "Mime Jr." -> "mimejr", "Tapu Koko" -> "tapukoko")
+        const idName = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const sets = showdownSetsCache[idName];
+
+        if (!sets || Object.keys(sets).length === 0) {
+            setsContainer.innerHTML = `<p class="no-sets">${TRANSLATIONS[currentLang]['no-sets-found']}</p>`;
+            return;
+        }
+
+        setsContainer.innerHTML = '';
+        Object.entries(sets).forEach(([setName, details]) => {
+            const setCard = document.createElement('div');
+            setCard.className = 'comp-set';
+
+            setCard.innerHTML = `
+                <div class="set-header">
+                    <span class="set-name">${setName}</span>
+                </div>
+                <div class="set-details">
+                    <div class="detail-item">
+                        <span class="detail-label">${TRANSLATIONS[currentLang]['item']}</span>
+                        <span class="detail-value">${details.item || '—'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">${TRANSLATIONS[currentLang]['ability']}</span>
+                        <span class="detail-value">${details.ability || '—'}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">${TRANSLATIONS[currentLang]['nature']}</span>
+                        <span class="detail-value">${details.nature || '—'}</span>
+                    </div>
+                </div>
+                <div class="set-moves">
+                    ${(details.moves || []).map(m => `<div class="move-tag">${Array.isArray(m) ? m[0] : m}</div>`).join('')}
+                </div>
+            `;
+            setsContainer.appendChild(setCard);
+        });
+
+    } catch (e) {
+        console.error('Error fetching Showdown sets:', e);
+        setsContainer.innerHTML = '<p class="no-sets">Error al cargar estrategias.</p>';
+    }
+}
+
+// ========== Audio Cry ==========
 function playCry() {
     if (!currentCryUrl) return;
 
