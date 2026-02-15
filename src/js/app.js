@@ -807,6 +807,108 @@ function playCry() {
     };
 }
 
+// ========== Radar Stats Chart ==========
+function renderStatsChart(stats, color) {
+    const svg = document.getElementById('statsRadarChart');
+    if (!svg) return;
+
+    const centerX = 100;
+    const centerY = 100;
+    const radius = 70;
+    const angleStep = (Math.PI * 2) / 6;
+    const maxStat = 255;
+
+    // Define stat order (clockwise)
+    const statOrder = ['hp', 'attack', 'defense', 'speed', 'special-defense', 'special-attack'];
+    const statLabels = {
+        'hp': 'HP', 'attack': 'ATK', 'defense': 'DEF',
+        'speed': 'SPE', 'special-defense': 'SPD', 'special-attack': 'SPA'
+    };
+
+    // Initialize SVG if empty
+    if (!svg.innerHTML) {
+        // Grid lines (3 levels)
+        for (let i = 1; i <= 3; i++) {
+            const r = (radius / 3) * i;
+            const points = [];
+            for (let j = 0; j < 6; j++) {
+                const x = centerX + r * Math.cos(j * angleStep - Math.PI / 2);
+                const y = centerY + r * Math.sin(j * angleStep - Math.PI / 2);
+                points.push(`${x},${y}`);
+            }
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.setAttribute('points', points.join(' '));
+            polygon.className.baseVal = 'radar-grid';
+            svg.appendChild(polygon);
+        }
+
+        // Axis lines
+        for (let i = 0; i < 6; i++) {
+            const x2 = centerX + radius * Math.cos(i * angleStep - Math.PI / 2);
+            const y2 = centerY + radius * Math.sin(i * angleStep - Math.PI / 2);
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', centerX);
+            line.setAttribute('y1', centerY);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.className.baseVal = 'radar-axis';
+            svg.appendChild(line);
+
+            // Labels
+            const labelRadius = radius + 15;
+            const lx = centerX + labelRadius * Math.cos(i * angleStep - Math.PI / 2);
+            const ly = centerY + labelRadius * Math.sin(i * angleStep - Math.PI / 2) + 4;
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', lx);
+            text.setAttribute('y', ly);
+            text.className.baseVal = 'radar-label';
+            text.textContent = statLabels[statOrder[i]];
+            svg.appendChild(text);
+        }
+
+        // The main stat polygon
+        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        poly.id = 'radarStatPoly';
+        poly.className.baseVal = 'radar-polygon';
+        svg.appendChild(poly);
+
+        // Individual points for better visual feedback
+        statOrder.forEach((_, i) => {
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.id = `radarPoint${i}`;
+            dot.setAttribute('r', '3');
+            dot.className.baseVal = 'radar-point';
+            svg.appendChild(dot);
+        });
+    }
+
+    // Update Points
+    const statMap = {};
+    stats.forEach(s => statMap[s.stat.name] = s.base_stat);
+
+    const points = [];
+    statOrder.forEach((name, i) => {
+        const val = statMap[name] || 0;
+        const pRadius = (val / maxStat) * radius;
+        const x = centerX + pRadius * Math.cos(i * angleStep - Math.PI / 2);
+        const y = centerY + pRadius * Math.sin(i * angleStep - Math.PI / 2);
+        points.push(`${x},${y}`);
+
+        const dot = document.getElementById(`radarPoint${i}`);
+        if (dot) {
+            dot.setAttribute('cx', x);
+            dot.setAttribute('cy', y);
+        }
+    });
+
+    const poly = document.getElementById('radarStatPoly');
+    if (poly) {
+        poly.setAttribute('points', points.join(' '));
+        poly.style.fill = color;
+        poly.style.stroke = color;
+    }
+}
+
 // ========== Render Pokemon ==========
 function renderPokemon(data, description, isLegendary = false, extraInfo = null) {
     const cardHeader = document.getElementById('cardHeader');
@@ -984,6 +1086,9 @@ function renderPokemon(data, description, isLegendary = false, extraInfo = null)
     // Navigation buttons state
     if (prevBtn) prevBtn.disabled = data.id <= 1;
     if (nextBtn) nextBtn.disabled = data.id >= MAX_POKEMON;
+
+    // Stats Chart
+    renderStatsChart(data.stats, typeColor.bg);
 
     renderCompetitiveAnalysis(data);
 

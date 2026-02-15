@@ -173,10 +173,17 @@
                     <!-- Stats Section -->
                     <div class="card-body">
                         <h3 class="stats-title" data-i18n="stats-title">Estadísticas Base</h3>
-                        <div class="stats-grid" id="statsGrid"></div>
-                        <div class="stats-total">
-                            <span class="total-label" data-i18n="stats-total">Total</span>
-                            <span class="total-value" id="statsTotal">0</span>
+                        <div class="stats-section">
+                            <div class="stats-container">
+                                <div class="stats-grid" id="statsGrid"></div>
+                                <div class="stats-radar-container">
+                                    <svg id="statsRadarChart" viewBox="0 0 200 200"></svg>
+                                </div>
+                            </div>
+                            <div class="stats-total">
+                                <span class="total-label" data-i18n="stats-total">Total</span>
+                                <span class="total-value" id="statsTotal">0</span>
+                            </div>
                         </div>
                     </div>
 
