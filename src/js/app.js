@@ -1179,9 +1179,25 @@ async function renderCompetitiveSets(pokemonName) {
             showdownSetsCache = await res.json();
         }
 
-        // Standardize name for Showdown (e.g., "Mime Jr." -> "mimejr", "Tapu Koko" -> "tapukoko")
-        const idName = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const sets = showdownSetsCache[idName];
+        // Search for the pokemon in all tiers (ubers, ou, uu, etc.)
+        let sets = null;
+        const searchName = pokemonName.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+        for (const tier in showdownSetsCache) {
+            const dex = showdownSetsCache[tier].dex;
+            if (!dex) continue;
+
+            // Look for matching key in dex (case-insensitive + normalized)
+            for (const pokeKey in dex) {
+                const normalizedPokeKey = pokeKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (normalizedPokeKey === searchName) {
+                    sets = dex[pokeKey];
+                    // If we find it in a competitive tier like OU, we can stop early
+                    if (tier.includes('ou') || tier.includes('ubers')) break;
+                }
+            }
+            if (sets && (tier.includes('ou') || tier.includes('ubers'))) break;
+        }
 
         if (!sets || Object.keys(sets).length === 0) {
             setsContainer.innerHTML = `<p class="no-sets">${TRANSLATIONS[currentLang]['no-sets-found']}</p>`;
